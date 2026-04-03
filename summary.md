@@ -1,41 +1,36 @@
-# Task Summary — Create countdowns table migration
+# Task Summary — Wire typed Supabase client
 
-**Task ID:** f7a3a4da-f6ca-4f57-8b4a-d2c42abf3fd6  
+**Task ID:** 96c4e4b4-7012-4ca8-ab4d-2b40e6817e86  
 **Status:** SUCCESS
 
 ## What was done
 
-Created `supabase/migrations/20260403000001_create_countdowns.sql` with:
+Created `src/lib/supabase.ts` — the single source of truth for all Supabase access in the app.
 
-### Table: `countdowns`
-| Column | Type | Constraints |
-|--------|------|-------------|
-| `id` | uuid | PRIMARY KEY, DEFAULT gen_random_uuid() |
-| `user_id` | uuid | NOT NULL, FK → auth.users(id) ON DELETE CASCADE |
-| `title` | text | NOT NULL, CHECK char_length <= 120 |
-| `target_date` | date | NOT NULL |
-| `description` | text | CHECK char_length <= 500 |
-| `share_token` | text | UNIQUE (populated by trigger) |
-| `created_at` | timestamptz | NOT NULL, DEFAULT now() |
-| `updated_at` | timestamptz | NOT NULL, DEFAULT now() |
+### Exported types
 
-### Indexes
-- `idx_countdowns_user_id` — B-tree on `user_id`
-- `idx_countdowns_share_token` — UNIQUE B-tree on `share_token`
-- `idx_countdowns_target_date` — B-tree on `target_date`
+| Type | Purpose |
+|------|---------|
+| `Countdown` | Full row shape returned from SELECT |
+| `CountdownInsert` | Shape required for INSERT (user_id, title, target_date required) |
+| `CountdownUpdate` | Partial shape for UPDATE (all fields optional) |
+| `Database` | Root generic passed to `createClient<Database>` |
 
-### Trigger functions
-1. **`set_updated_at()`** — BEFORE UPDATE: sets `updated_at = now()`
-2. **`generate_share_token()`** — BEFORE INSERT: generates URL-safe base64 token from `gen_random_bytes(24)`, retries up to 5 times on collision
+All types mirror the `countdowns` table schema from migration `20260403000001_create_countdowns.sql`:
+`id · user_id · title · target_date · description · share_token · created_at · updated_at`
 
-### Security
-- `ALTER TABLE countdowns ENABLE ROW LEVEL SECURITY;`
-- RLS policy stubs documented in rollback comment block for follow-up
+### Exported clients
 
-### Rollback
-Rollback instructions included as a comment block at the top of the migration.
+| Export | Auth session | Use case |
+|--------|-------------|----------|
+| `supabase` | persisted (default) | Authenticated CRUD — RLS enforced via user JWT |
+| `supabaseAnon` | `persistSession: false`, `autoRefreshToken: false` | Unauthenticated share-token reads |
+
+### Runtime env-var guards
+
+Both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are checked at module load time. Missing values throw descriptive errors before any network call is made.
 
 ## Next actions
-1. Apply migration via Supabase dashboard SQL editor or `supabase db push`
-2. Add concrete RLS policies (SELECT/INSERT/UPDATE/DELETE) — stubs provided in the file
-3. Run `mcp__claude_ai_Supabase__generate_typescript_types` to update `src/types/database.ts`
+1. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to `.env` (and `.env.example` for documentation)
+2. Add concrete RLS policies for the countdowns table (stubs in migration file)
+3. Implement `src/services/countdowns.ts` using the exported `supabase` / `supabaseAnon` clients
