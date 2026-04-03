@@ -4,16 +4,16 @@ You do not own persistent state.
 ## Role: Senior Full-Stack Engineer | Focus: Write clean, production-ready code.
 
 ## Output: create ./result.json (MANDATORY) and ./summary.md
-result.json schema: {"schema_version":"execution_result_v1","task_id":"96c4e4b4-7012-4ca8-ab4d-2b40e6817e86","status":"SUCCESS|FAILED","summary":"min 20 chars","changed_files":[],"artifacts":[],"tests":{"ran":false,"passed":false},"approval_flags":[],"issues":[],"next_actions":[]}
+result.json schema: {"schema_version":"execution_result_v1","task_id":"f41c39c6-6c0d-4551-9b22-02d9345f1a83","status":"SUCCESS|FAILED","summary":"min 20 chars","changed_files":[],"artifacts":[],"tests":{"ran":false,"passed":false},"approval_flags":[],"issues":[],"next_actions":[]}
 Create result.json FIRST, update with final results LAST. List ALL changed files.
 
 ## Task:
 ```json
 {
   "task": {
-    "id": "96c4e4b4-7012-4ca8-ab4d-2b40e6817e86",
-    "title": "[dday] Wire typed Supabase client in src/lib/supabase.ts with Database types",
-    "objective": "Create src/lib/supabase.ts. Define Database TypeScript interface manually mirroring the countdowns schema (type Countdown, type CountdownInsert, type CountdownUpdate). Export two clients: (1) supabase = createClient<Database>(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY) for authenticated use; (2) supabaseAnon = same createClient but explicitly for unauthenticated share-token reads. Export the Countdown, CountdownInsert, CountdownUpdate types. Use import.meta.env.VITE_SUPABASE_URL and import.meta.env.VITE_SUPABASE_ANON_KEY with runtime guards that throw descriptive errors if missing.\n=== Implementation Plan Context ===\nScreens:\nSharedCountdown (/share/:share_token): CountdownCard, CountdownTimer, ShareBadge\nData Model:\ncountdowns: id, user_id, title, target_date, description, share_token, created_at, updated_at\nAPIs:\nlistMyCountdowns: SELECT countdowns\ngetCountdownById: SELECT countdowns\ngetCountdownByShareToken: SELECT countdowns\ncreateCountdown: INSERT countdowns\nupdateCountdown: UPDATE countdowns\ndeleteCountdown: DELETE countdowns\nDesign:\nColors: {\"text\":\"#F1F0FF\",\"border\":\"#2E2E50\",\"danger\":\"#EF4444\",\"primary\":\"#6366F1\",\"success\":\"#10B981\",\"surface\":\"#1A1A2E\",\"secondary\":\"#F59E0B\",\"background\":\"#0F0F1A\",\"text_muted\":\"#9B99C4\",\"primary_hover\":\"#4F46E5\",\"surface_elevated\":\"#252540\"}\nRules: rounded-xl or rounded-2xl corners on all cards and modals, consistent spacing with p-4 on compact elements, p-6 on cards, mobile-first responsive: single column on mobile, grid on md+, smooth transitions on interactive elements: transition-all duration-200 ease-in-out, hover states: hover:bg-surface_elevated or hover:scale-[1.02] on cards, focus rings: focus-visible:ring-2 ring-primary for accessibility, dark surface backgrounds with indigo/violet primary accents"
+    "id": "f41c39c6-6c0d-4551-9b22-02d9345f1a83",
+    "title": "[dday] Supabase client, anonymous auth, and app router setup",
+    "objective": "Create src/lib/supabase.ts exporting a typed SupabaseClient (createClient with VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY). Create src/context/AuthContext.tsx that calls supabase.auth.signInAnonymously() on mount if no session exists, exposes userId, and wraps children. In src/main.tsx wrap App in AuthProvider and BrowserRouter. In src/App.tsx define Routes: '/' → Home (lazy), '/new' → CreateEdit (lazy), '/edit/:id' → CreateEdit (lazy). Add a minimal full-screen loading state while anonymous session initializes.\n=== Implementation Plan Context ===\nScreens:\nHome (/): CountdownList, CountdownCard, EmptyState, FloatingAddButton, DeleteConfirmDialog\nCreateEdit (/new | /edit/:id): BackButton, PageTitle, EmojiPicker, TitleInput, DateInput, NotesTextarea, FieldError, SubmitButton\nData Model:\ncountdowns: id, user_id, emoji, title, target_date, notes, created_at, updated_at\nAPIs:\ninitAnonymousSession: RPC supabase.auth.signInAnonymously()\nlistCountdowns: SELECT countdowns\ngetCountdown: SELECT countdowns\ncreateCountdown: INSERT countdowns\nupdateCountdown: UPDATE countdowns\ndeleteCountdown: DELETE countdowns\nDesign:\nColors: {\"text\":\"#F1F5F9\",\"error\":\"#F87171\",\"border\":\"#334155\",\"primary\":\"#7C3AED\",\"success\":\"#34D399\",\"surface\":\"#1E293B\",\"warning\":\"#FBBF24\",\"secondary\":\"#F97316\",\"background\":\"#0F172A\",\"text_muted\":\"#94A3B8\",\"primary_hover\":\"#6D28D9\",\"surface_raised\":\"#293548\"}\nRules: rounded-xl or rounded-2xl corners on all cards and inputs, consistent spacing with p-4 for cards, p-6 for page-level padding, mobile-first responsive: max-w-lg mx-auto for single-column form layout, smooth transitions on interactive elements: transition-all duration-150 ease-in-out, inputs: bg-slate-800 border border-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30 rounded-xl px-4 py-3 text-slate-100 w-full outline-none, primary button: bg-violet-600 hover:bg-violet-700 active:scale-95 text-white font-semibold rounded-xl px-6 py-3 w-full disabled:opacity-50 disabled:cursor-not-allowed transition-all, emoji grid item: rounded-lg p-2 text-2xl cursor-pointer hover:bg-slate-700 transition-colors; selected state adds ring-2 ring-violet-500 bg-slate-700, CountdownCard: bg-slate-800 rounded-2xl p-4 flex items-center gap-4 border border-slate-700 hover:border-slate-500 transition-colors, FieldError: text-red-400 text-sm mt-1 flex items-center gap-1 animate-in slide-in-from-top-1 duration-150, BackButton: text-slate-400 hover:text-slate-100 flex items-center gap-1 text-sm transition-colors mb-6, Days countdown badge on card: font-mono font-bold text-orange-400 text-lg"
   },
   "constraints": "{}",
   "context": {
@@ -28,17 +28,7 @@ Create result.json FIRST, update with final results LAST. List ALL changed files
     "artifact_refs": [],
     "compressed_summary": "Policy: {\"lesson\":\"일반 원칙: API 키는 환경변수. 예외: Supabase CLI 없으면 Vault → DB 함수 → Edge Function 경로 사용\",\"result\":\"Vault에 저장하고 DB 함수(vault_read_secret)를 통해 Edge Function에서 조회하는 방식 사용\",\"severity\":\"P2\",\"situation\":\"Edge Function에서 Vault의 API 키 사용\",\"confidence\":0.85,\"action_taken\":\"Deno.env.get()로 시도 → 없음. supabase secrets set도 CLI 로그인 필요\",\"character_id\":\"90cd461a-c6f4-446c-b8da-9c78a139a26e\",\"original_experience_id\":\"9667f624-e44c-48d5-b429-762794d90fe0\"}"
   },
-  "plan": {
-    "steps": [
-      "Inspect context and constraints",
-      "Execute allowed changes",
-      "Create summary and result artifacts",
-      "Run QA or request approval if needed"
-    ],
-    "pre_checks": [],
-    "risk_areas": [],
-    "estimated_complexity": "M"
-  },
+  "plan": null,
   "execution_mode": "single",
   "allowed_tools": [
     "read_repo_file",
@@ -57,12 +47,6 @@ Rules:
 - Do NOT migrate between frameworks (Vite->Next.js, etc).
 - Use the existing database client directly. No custom API layer unless requested.
 - DESIGN: Use modern, clean UI. Rounded corners, proper spacing, good color contrast. Mobile-first.
-
-## Execution Plan (follow these steps):
-1. Inspect context and constraints
-2. Execute allowed changes
-3. Create summary and result artifacts
-4. Run QA or request approval if needed
 
 ## Quality Standards (MUST follow — violations fail QA):
 - [ERROR] No secrets in frontend code: API keys, tokens, passwords must be in .env, never in source (weight: 3.0, violations: 0)
