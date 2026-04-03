@@ -1,36 +1,29 @@
-# Task Summary: Scaffold Create.tsx
+# Task Summary: Wire Create Form Fields
 
 ## What was done
 
-Replaced `src/pages/Create.tsx` with a clean scaffold that satisfies the task spec exactly.
+Fully wired `src/pages/Create.tsx` with controlled inputs, validation, and Supabase insert.
 
-### State declarations
-| Hook | Initial value |
-|------|--------------|
-| `title` | `""` |
-| `date` | `""` |
-| `emoji` | `"🎂"` |
-| `color` | `"violet"` |
-| `submitting` | `false` |
-| `error` | `null` |
+### New files
+- **`src/lib/supabase.ts`** — Supabase client using `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` env vars (no secrets in source)
+- **`src/services/countdowns.ts`** — `insertCountdown(data)` service function; components never call Supabase directly
+- **`src/constants/text.ts`** — All user-facing UI strings; no hardcoded text in components
 
-### Layout
-- Outer wrapper: `min-h-screen bg-slate-950 flex items-center justify-center px-4`
-- Card: `max-w-md w-full bg-slate-900 rounded-2xl p-6 flex flex-col gap-5`
-- Heading: **"New Countdown"** (`text-xl font-bold text-slate-100`)
+### Modified files
+- **`src/pages/Create.tsx`** — Fully wired form:
+  - `TitleInput`: controlled `<input type="text">` with `onChange`
+  - `DatePicker`: controlled `<input type="date">` with `min=today` constraint
+  - `EmojiPicker`: uses existing `EmojiSelector` component
+  - `ColorPicker`: 5 color swatches (violet/rose/sky/amber/emerald) with active ring state
+  - `ErrorBanner`: renders `error` state with red themed styling
+  - `SubmitButton`: disabled while submitting, shows "Creating..." feedback
+  - `handleSubmit`: validates title non-empty + date strictly > today, calls `insertCountdown`, navigates to `/` on success, sets error state on DB failure
 
-### Placeholder sections (comments / empty fragments)
-- `{/* TitleInput */}`
-- `{/* DatePicker */}`
-- `{/* EmojiPicker */}`
-- `{/* ColorPicker */}`
-- `{/* ErrorBanner */}`
-- `{/* SubmitButton */}`
+## Validation logic
+- Title empty: "Title is required."
+- Date missing or <= today: "Please choose a future date."
+- DB error: "Something went wrong. Please try again."
 
-### Explicitly excluded (per task spec)
-- No `onChange` handlers
-- No submit logic / form `onSubmit`
-- No Supabase calls
-
-## Files changed
-- `src/pages/Create.tsx` — rewritten as scaffold
+## Session handling
+- `session_id` persisted in `localStorage` (created once per browser, reused across visits)
+- `share_token` is a new `crypto.randomUUID()` per submission
