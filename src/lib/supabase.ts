@@ -7,29 +7,30 @@ import { createClient } from '@supabase/supabase-js';
 export interface Countdown {
   id: string;
   user_id: string;
+  emoji: string;
   title: string;
-  target_date: string;        // ISO date string (YYYY-MM-DD)
-  description: string | null;
-  share_token: string | null;
-  created_at: string;         // ISO timestamptz string
-  updated_at: string;         // ISO timestamptz string
+  target_date: string;   // ISO date string (YYYY-MM-DD)
+  notes: string | null;
+  created_at: string;    // ISO timestamptz string
+  updated_at: string;    // ISO timestamptz string
 }
 
 export interface CountdownInsert {
   id?: string;
   user_id: string;
+  emoji?: string;
   title: string;
   target_date: string;
-  description?: string | null;
-  share_token?: string | null;
+  notes?: string | null;
   created_at?: string;
   updated_at?: string;
 }
 
 export interface CountdownUpdate {
+  emoji?: string;
   title?: string;
   target_date?: string;
-  description?: string | null;
+  notes?: string | null;
   updated_at?: string;
 }
 
@@ -70,22 +71,11 @@ if (!supabaseAnonKey) {
 }
 
 // ---------------------------------------------------------------------------
-// Clients
+// Client
 // ---------------------------------------------------------------------------
 
 /**
- * Primary client — used for authenticated operations (RLS enforced via JWT).
+ * Supabase client — authenticated operations with RLS enforced via JWT.
  * Auth session is persisted automatically by @supabase/supabase-js.
  */
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
-
-/**
- * Anon client — explicit instance for unauthenticated share-token reads.
- * Keeps the intent clear at call sites: no user session, public RLS policies only.
- */
-export const supabaseAnon = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
-  },
-});
