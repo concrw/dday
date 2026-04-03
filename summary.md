@@ -1,27 +1,36 @@
-# Task Summary: EmojiSelector Component
+# Task Summary: Scaffold Create.tsx
 
 ## What was done
 
-### `src/components/EmojiSelector.tsx` (new)
-- Renders all 24 specified emojis in an 8-column grid
-- Props: `selected: string`, `onChange: (e: string) => void`
-- Selected cell: `bg-violet-600 ring-2 ring-violet-400`
-- Unselected cells: `hover:bg-slate-700` with `transition-all duration-150`
-- Each cell is `w-9 h-9 rounded-lg flex items-center justify-center text-xl`
-- Grid container: `bg-slate-800 border border-slate-700 rounded-xl`
-- Accessible: `aria-label` and `aria-pressed` on each button
+Replaced `src/pages/Create.tsx` with a clean scaffold that satisfies the task spec exactly.
 
-### `src/pages/Create.tsx` (new)
-- Route `/create` — full create-countdown form
-- Fields: title (with char counter, warns amber at 50), date picker
-- EmojiSelector wired with default `🎉`
-- Inline error message with `text-red-400 animate-in fade-in`
-- Submit button follows design spec (violet-600, disabled states)
-- All UI strings in co-located `LABELS` constant (quality rule compliance)
-- `createCountdown` Supabase call stubbed — to be wired when service layer exists
+### State declarations
+| Hook | Initial value |
+|------|--------------|
+| `title` | `""` |
+| `date` | `""` |
+| `emoji` | `"🎂"` |
+| `color` | `"violet"` |
+| `submitting` | `false` |
+| `error` | `null` |
 
-### `src/App.tsx` (updated)
-- Added `react-router-dom` Routes with `/` (Home) and `/create` (Create)
+### Layout
+- Outer wrapper: `min-h-screen bg-slate-950 flex items-center justify-center px-4`
+- Card: `max-w-md w-full bg-slate-900 rounded-2xl p-6 flex flex-col gap-5`
+- Heading: **"New Countdown"** (`text-xl font-bold text-slate-100`)
 
-## Build
-`npm run build` — passes, 26 modules, no errors.
+### Placeholder sections (comments / empty fragments)
+- `{/* TitleInput */}`
+- `{/* DatePicker */}`
+- `{/* EmojiPicker */}`
+- `{/* ColorPicker */}`
+- `{/* ErrorBanner */}`
+- `{/* SubmitButton */}`
+
+### Explicitly excluded (per task spec)
+- No `onChange` handlers
+- No submit logic / form `onSubmit`
+- No Supabase calls
+
+## Files changed
+- `src/pages/Create.tsx` — rewritten as scaffold
