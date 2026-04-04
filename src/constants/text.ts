@@ -1,0 +1,38 @@
+export const TEXT = {
+  APP_NAME: "DDay Counter",
+  NAV_HOME: "Home",
+  NAV_CREATE: "New Event",
+
+  LANDING_TITLE: "Your D-Day Events",
+  LANDING_SUBTITLE: "Track important dates and countdowns",
+  EMPTY_TITLE: "No events yet",
+  EMPTY_SUBTITLE: "Create your first D-Day event to start counting",
+  EMPTY_CTA: "CREATE EVENT",
+
+  CREATE_TITLE: "Create Event",
+  CREATE_SUBTITLE: "Add a new date to track",
+  FORM_TITLE_LABEL: "Event Title",
+  FORM_TITLE_PLACEHOLDER: "e.g. Wedding Day",
+  FORM_DATE_LABEL: "Target Date",
+  FORM_NOTE_LABEL: "Note (optional)",
+  FORM_NOTE_PLACEHOLDER: "Add a note...",
+  FORM_COLOR_LABEL: "Color",
+  FORM_SUBMIT: "CREATE EVENT",
+  FORM_CANCEL: "Cancel",
+
+  EVENT_SHARE: "SHARE",
+  EVENT_DELETE: "DELETE",
+  EVENT_DELETE_CONFIRM: "Are you sure you want to delete this event?",
+  EVENT_BACK: "Back",
+  EVENT_COPIED: "Link copied!",
+  EVENT_DAYS_LEFT: "days to go",
+  EVENT_DAYS_AGO: "days ago",
+  EVENT_TODAY: "Today is the day!",
+
+  LOADING: "Loading...",
+  ERROR_LOAD: "Failed to load events. Please try again.",
+  ERROR_CREATE: "Failed to create event. Please try again.",
+  ERROR_DELETE: "Failed to delete event. Please try again.",
+  ERROR_NOT_FOUND: "Event not found.",
+  RETRY: "Retry",
+} as const;

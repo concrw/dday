@@ -1,9 +1,14 @@
-function App() {
+import { Routes, Route } from "react-router-dom";
+import Landing from "@/pages/Landing";
+import Create from "@/pages/Create";
+import Event from "@/pages/Event";
+
+export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-2xl font-bold">DDay</h1>
-    </div>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/create" element={<Create />} />
+      <Route path="/event/:id" element={<Event />} />
+    </Routes>
   );
 }
-
-export default App;
