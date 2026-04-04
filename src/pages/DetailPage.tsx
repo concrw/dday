@@ -1,0 +1,167 @@
+import { useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useDdayEvent } from '@/hooks/useDdayEvent';
+import { useCountdown } from '@/hooks/useCountdown';
+import { deleteEvent } from '@/services/ddayService';
+import { CountdownBlock } from '@/components/CountdownBlock';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { TEXT } from '@/constants/text';
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function getDayDiff(targetDate: string): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(targetDate);
+  target.setHours(0, 0, 0, 0);
+  return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function CountdownSection({ targetDate, color }: { targetDate: string; color: string }) {
+  const countdown = useCountdown(targetDate);
+  const diff = getDayDiff(targetDate);
+  const label = TEXT.detail.ddayLabel(diff);
+
+  return (
+    <div
+      className="rounded-2xl p-6 md:p-10 flex flex-col items-center gap-6"
+      style={{ background: 'linear-gradient(135deg, #1a5276 0%, #0d2137 100%)' }}
+    >
+      <div className="text-5xl md:text-6xl font-bold" style={{ color }}>
+        {label}
+      </div>
+
+      {!countdown.isPast && !countdown.isToday && (
+        <div className="flex flex-wrap justify-center gap-4">
+          <CountdownBlock value={countdown.days} label={TEXT.detail.daysUnit} />
+          <CountdownBlock value={countdown.hours} label={TEXT.detail.hoursUnit} />
+          <CountdownBlock value={countdown.minutes} label={TEXT.detail.minutesUnit} />
+          <CountdownBlock value={countdown.seconds} label={TEXT.detail.secondsUnit} />
+        </div>
+      )}
+
+      <p className="text-white/60 text-sm">{formatDate(targetDate)}</p>
+    </div>
+  );
+}
+
+export function DetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { event, loading, error } = useDdayEvent(id ?? '');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [shareCopied, setShareCopied] = useState(false);
+
+  async function handleDelete() {
+    if (!event) return;
+    if (!window.confirm(TEXT.detail.deleteConfirm)) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteEvent(event.id);
+      navigate('/');
+    } catch {
+      setDeleteError(TEXT.detail.deleteError);
+      setDeleting(false);
+    }
+  }
+
+  async function handleShare() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      // fallback: select the URL bar
+    }
+  }
+
+  if (loading) return <LoadingSpinner text={TEXT.detail.loadingText} />;
+
+  if (error || !event) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#f0f0f0' }}>
+        <p className="text-lg" style={{ color: '#e74c3c' }}>{TEXT.detail.errorText}</p>
+        <Link to="/" className="text-sm underline" style={{ color: '#1a9aaa' }}>
+          {TEXT.detail.backButton}
+        </Link>
+      </div>
+    );
+  }
+
+  const accentColor = event.color ?? '#1a9aaa';
+
+  return (
+    <div className="min-h-screen" style={{ background: '#f0f0f0' }}>
+      <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-6">
+        <div className="flex items-center gap-3">
+          <Link
+            to="/"
+            className="text-sm font-medium transition-all duration-200 hover:opacity-75"
+            style={{ color: '#1a9aaa' }}
+          >
+            {TEXT.detail.backButton}
+          </Link>
+        </div>
+
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold leading-tight" style={{ color: '#333333' }}>
+            {event.title}
+          </h1>
+        </div>
+
+        <CountdownSection targetDate={event.target_date} color={accentColor} />
+
+        {event.note && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#888' }}>
+              {TEXT.detail.noteLabel}
+            </p>
+            <p className="text-base" style={{ color: '#333333' }}>
+              {event.note}
+            </p>
+          </div>
+        )}
+
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#888' }}>
+            {TEXT.detail.createdLabel}
+          </p>
+          <p className="text-sm" style={{ color: '#555' }}>
+            {formatDate(event.created_at.split('T')[0])}
+          </p>
+        </div>
+
+        {deleteError && (
+          <p className="text-sm px-4 py-3 rounded-lg" style={{ background: '#fdecea', color: '#e74c3c' }}>
+            {deleteError}
+          </p>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={handleShare}
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold transition-all duration-200 hover:scale-105"
+            style={{ background: '#f5a623', color: '#fff' }}
+          >
+            {shareCopied ? TEXT.detail.shareSuccess : TEXT.detail.shareButton}
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleting}
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold border transition-all duration-200 hover:scale-105 disabled:opacity-60"
+            style={{ borderColor: '#e74c3c', color: '#e74c3c', background: '#fff' }}
+          >
+            {deleting ? '...' : TEXT.detail.deleteButton}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
