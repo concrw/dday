@@ -5,6 +5,7 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { deleteEvent } from '@/services/ddayService';
 import { CountdownBlock } from '@/components/CountdownBlock';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { ShareCardModal } from '@/components/ShareCardModal';
 import { TEXT } from '@/constants/text';
 
 function formatDate(dateStr: string): string {
@@ -88,6 +89,7 @@ export function DetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
 
   async function handleDelete() {
     if (!event) return;
@@ -183,10 +185,17 @@ export function DetailPage() {
           </Link>
           <button
             type="button"
-            onClick={handleShare}
+            onClick={() => setShowShareCard(true)}
             className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-accent hover:bg-accent-dark transition-all duration-200 hover:scale-105 active:scale-[0.97]"
           >
-            {shareCopied ? TEXT.detail.shareSuccess : TEXT.detail.shareButton}
+            카드 공유
+          </button>
+          <button
+            type="button"
+            onClick={handleShare}
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold border border-border text-text-secondary bg-surface transition-all duration-200 hover:scale-105 active:scale-[0.97]"
+          >
+            {shareCopied ? TEXT.detail.shareSuccess : '링크 복사'}
           </button>
           <button
             type="button"
@@ -197,6 +206,10 @@ export function DetailPage() {
             {deleting ? '...' : TEXT.detail.deleteButton}
           </button>
         </div>
+
+        {showShareCard && (
+          <ShareCardModal event={event} onClose={() => setShowShareCard(false)} />
+        )}
       </div>
     </div>
   );
