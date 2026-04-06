@@ -22,18 +22,15 @@ function formatDate(dateStr: string): string {
 export function EventCard({ event }: EventCardProps) {
   const diff = getDayDiff(event.target_date);
   const label = TEXT.landing.ddayLabel(diff);
-  const accentColor = event.color ?? '#1a9aaa';
+  const accentColor = event.color ?? 'var(--color-primary)';
 
   return (
     <Link
       to={`/events/${event.id}`}
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] block"
+      className="bg-surface rounded-2xl shadow-card border border-border p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] block"
     >
       <div className="flex items-start justify-between gap-2">
-        <h3
-          className="text-lg font-bold leading-tight truncate"
-          style={{ color: '#333333' }}
-        >
+        <h3 className="text-lg font-bold leading-tight truncate text-text">
           {event.title}
         </h3>
         <span
@@ -45,17 +42,17 @@ export function EventCard({ event }: EventCardProps) {
       </div>
 
       {event.note && (
-        <p className="text-sm line-clamp-2" style={{ color: '#888' }}>
+        <p className="text-sm line-clamp-2 text-text-secondary">
           {event.note}
         </p>
       )}
 
-      <div className="flex items-center gap-2 mt-auto pt-2 border-t border-gray-50">
+      <div className="flex items-center gap-2 mt-auto pt-2 border-t border-border">
         <span
           className="w-2.5 h-2.5 rounded-full shrink-0"
           style={{ background: accentColor }}
         />
-        <span className="text-sm" style={{ color: '#888' }}>
+        <span className="text-sm text-text-secondary">
           {formatDate(event.target_date)}
         </span>
       </div>

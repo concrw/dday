@@ -4,7 +4,7 @@ import { createEvent } from '@/services/ddayService';
 import { TEXT } from '@/constants/text';
 import type { CreateDdayEventInput } from '@/types';
 
-const DEFAULT_COLOR = '#1a9aaa';
+const DEFAULT_COLOR = '#6366F1';
 
 function ColorPicker({
   value,
@@ -68,20 +68,9 @@ export function CreatePage() {
     }
   }
 
-  const inputClass =
-    'w-full rounded-lg px-4 py-3 text-base border transition-all duration-200 focus:outline-none focus:ring-2';
-  const inputStyle = {
-    borderColor: '#e0e0e0',
-    color: '#333333',
-    background: '#fff',
-  };
-
   return (
-    <div className="min-h-screen" style={{ background: '#f0f0f0' }}>
-      <section
-        className="py-12 px-4"
-        style={{ background: 'linear-gradient(135deg, #1a9aaa 0%, #1a5276 100%)' }}
-      >
+    <div className="min-h-screen bg-bg">
+      <section className="py-12 px-4 bg-gradient-to-br from-primary to-primary-dark">
         <div className="max-w-xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white">{TEXT.create.pageTitle}</h1>
           <p className="text-white/75 mt-2 text-base">{TEXT.create.pageSubtitle}</p>
@@ -89,19 +78,16 @@ export function CreatePage() {
       </section>
 
       <section className="max-w-xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-surface rounded-2xl shadow-card border border-border p-6">
           {errorMsg && (
-            <div
-              className="mb-5 px-4 py-3 rounded-lg text-sm"
-              style={{ background: '#fdecea', color: '#e74c3c' }}
-            >
+            <div className="mb-5 px-4 py-3 rounded-lg text-sm bg-error-bg text-error">
               {errorMsg}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold" style={{ color: '#333333' }}>
+              <label className="text-sm font-semibold text-text">
                 {TEXT.create.titleLabel}
               </label>
               <input
@@ -112,13 +98,12 @@ export function CreatePage() {
                 placeholder={TEXT.create.titlePlaceholder}
                 required
                 maxLength={100}
-                className={inputClass}
-                style={{ ...inputStyle, '--tw-ring-color': '#1a9aaa' } as React.CSSProperties}
+                className="w-full rounded-lg px-4 py-3 text-base border border-border bg-surface text-text transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold" style={{ color: '#333333' }}>
+              <label className="text-sm font-semibold text-text">
                 {TEXT.create.dateLabel}
               </label>
               <input
@@ -127,13 +112,12 @@ export function CreatePage() {
                 value={form.target_date}
                 onChange={handleChange}
                 required
-                className={inputClass}
-                style={{ ...inputStyle, '--tw-ring-color': '#1a9aaa' } as React.CSSProperties}
+                className="w-full rounded-lg px-4 py-3 text-base border border-border bg-surface text-text transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold" style={{ color: '#333333' }}>
+              <label className="text-sm font-semibold text-text">
                 {TEXT.create.noteLabel}
               </label>
               <textarea
@@ -143,13 +127,12 @@ export function CreatePage() {
                 placeholder={TEXT.create.notePlaceholder}
                 rows={3}
                 maxLength={300}
-                className={inputClass + ' resize-none'}
-                style={{ ...inputStyle, '--tw-ring-color': '#1a9aaa' } as React.CSSProperties}
+                className="w-full rounded-lg px-4 py-3 text-base border border-border bg-surface text-text transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold" style={{ color: '#333333' }}>
+              <label className="text-sm font-semibold text-text">
                 {TEXT.create.colorLabel}
               </label>
               <ColorPicker
@@ -162,15 +145,13 @@ export function CreatePage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white transition-all duration-200 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
-                style={{ background: 'linear-gradient(to right, #1a9aaa, #1a5276)' }}
+                className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark transition-all duration-200 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {submitting ? TEXT.create.submittingButton : TEXT.create.submitButton}
               </button>
               <Link
                 to="/"
-                className="flex-1 min-h-12 rounded-xl text-base font-semibold text-center flex items-center justify-center transition-all duration-200 hover:scale-105 border"
-                style={{ borderColor: '#e0e0e0', color: '#666' }}
+                className="flex-1 min-h-12 rounded-xl text-base font-semibold text-center flex items-center justify-center transition-all duration-200 hover:scale-105 border border-border text-text-secondary"
               >
                 {TEXT.create.cancelButton}
               </Link>

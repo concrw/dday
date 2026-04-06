@@ -47,13 +47,13 @@ export const TEXT = {
   },
   colors: {
     options: [
-      { value: '#1a9aaa', label: 'Teal' },
-      { value: '#1a5276', label: 'Navy' },
-      { value: '#f5a623', label: 'Amber' },
-      { value: '#e74c3c', label: 'Red' },
-      { value: '#2ecc71', label: 'Green' },
-      { value: '#9b59b6', label: 'Purple' },
-      { value: '#6366f1', label: 'Indigo' },
+      { value: '#6366F1', label: 'Indigo' },
+      { value: '#8B5CF6', label: 'Violet' },
+      { value: '#F59E0B', label: 'Amber' },
+      { value: '#EF4444', label: 'Red' },
+      { value: '#10B981', label: 'Emerald' },
+      { value: '#EC4899', label: 'Pink' },
+      { value: '#06B6D4', label: 'Cyan' },
     ],
   },
 } as const;

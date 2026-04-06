@@ -6,7 +6,7 @@ import { DetailPage } from '@/pages/DetailPage';
 
 function App() {
   return (
-    <div className="min-h-screen" style={{ background: '#f0f0f0' }}>
+    <div className="min-h-screen bg-bg">
       <NavBar />
       <Routes>
         <Route path="/" element={<LandingPage />} />

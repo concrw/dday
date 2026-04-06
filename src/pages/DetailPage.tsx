@@ -26,10 +26,7 @@ function CountdownSection({ targetDate, color }: { targetDate: string; color: st
   const label = TEXT.detail.ddayLabel(diff);
 
   return (
-    <div
-      className="rounded-2xl p-6 md:p-10 flex flex-col items-center gap-6"
-      style={{ background: 'linear-gradient(135deg, #1a5276 0%, #0d2137 100%)' }}
-    >
+    <div className="rounded-2xl p-6 md:p-10 flex flex-col items-center gap-6 bg-gradient-to-br from-primary-dark to-[#312E81]">
       <div className="text-5xl md:text-6xl font-bold" style={{ color }}>
         {label}
       </div>
@@ -84,32 +81,31 @@ export function DetailPage() {
 
   if (error || !event) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#f0f0f0' }}>
-        <p className="text-lg" style={{ color: '#e74c3c' }}>{TEXT.detail.errorText}</p>
-        <Link to="/" className="text-sm underline" style={{ color: '#1a9aaa' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-bg">
+        <p className="text-lg text-error">{TEXT.detail.errorText}</p>
+        <Link to="/" className="text-sm underline text-primary">
           {TEXT.detail.backButton}
         </Link>
       </div>
     );
   }
 
-  const accentColor = event.color ?? '#1a9aaa';
+  const accentColor = event.color ?? 'var(--color-primary)';
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0f0f0' }}>
+    <div className="min-h-screen bg-bg">
       <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-6">
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="text-sm font-medium transition-all duration-200 hover:opacity-75"
-            style={{ color: '#1a9aaa' }}
+            className="text-sm font-medium transition-all duration-200 hover:opacity-75 text-primary"
           >
             {TEXT.detail.backButton}
           </Link>
         </div>
 
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight" style={{ color: '#333333' }}>
+          <h1 className="text-3xl md:text-4xl font-bold leading-tight text-text">
             {event.title}
           </h1>
         </div>
@@ -117,27 +113,27 @@ export function DetailPage() {
         <CountdownSection targetDate={event.target_date} color={accentColor} />
 
         {event.note && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#888' }}>
+          <div className="bg-surface rounded-2xl border border-border p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-2 text-text-muted">
               {TEXT.detail.noteLabel}
             </p>
-            <p className="text-base" style={{ color: '#333333' }}>
+            <p className="text-base text-text">
               {event.note}
             </p>
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#888' }}>
+        <div className="bg-surface rounded-2xl border border-border p-6">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1 text-text-muted">
             {TEXT.detail.createdLabel}
           </p>
-          <p className="text-sm" style={{ color: '#555' }}>
+          <p className="text-sm text-text-secondary">
             {formatDate(event.created_at.split('T')[0])}
           </p>
         </div>
 
         {deleteError && (
-          <p className="text-sm px-4 py-3 rounded-lg" style={{ background: '#fdecea', color: '#e74c3c' }}>
+          <p className="text-sm px-4 py-3 rounded-lg bg-error-bg text-error">
             {deleteError}
           </p>
         )}
@@ -146,8 +142,7 @@ export function DetailPage() {
           <button
             type="button"
             onClick={handleShare}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold transition-all duration-200 hover:scale-105"
-            style={{ background: '#f5a623', color: '#fff' }}
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-accent hover:bg-accent-dark transition-all duration-200 hover:scale-105"
           >
             {shareCopied ? TEXT.detail.shareSuccess : TEXT.detail.shareButton}
           </button>
@@ -155,8 +150,7 @@ export function DetailPage() {
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold border transition-all duration-200 hover:scale-105 disabled:opacity-60"
-            style={{ borderColor: '#e74c3c', color: '#e74c3c', background: '#fff' }}
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold border border-error text-error bg-surface transition-all duration-200 hover:scale-105 disabled:opacity-60"
           >
             {deleting ? '...' : TEXT.detail.deleteButton}
           </button>
