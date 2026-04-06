@@ -24,7 +24,7 @@ function darken(hex: string, amount = 40): string {
 }
 
 function formatDateKo(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('ko-KR', {
+  return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
   });
 }
