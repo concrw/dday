@@ -1,9 +1,12 @@
+export type Recurring = 'none' | 'yearly';
+
 export interface DdayEvent {
   id: string;
   title: string;
   target_date: string;
   note: string | null;
   color: string | null;
+  recurring: Recurring;
   created_at: string;
 }
 
@@ -12,6 +15,7 @@ export interface CreateDdayEventInput {
   target_date: string;
   note?: string;
   color?: string;
+  recurring?: Recurring;
 }
 
 export interface CountdownValue {

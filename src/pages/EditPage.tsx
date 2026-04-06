@@ -2,7 +2,8 @@ import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { fetchEvent, updateEvent } from '@/services/ddayService';
 import { TEXT } from '@/constants/text';
-import type { DdayEvent } from '@/types';
+import { RecurringToggle } from '@/components/RecurringToggle';
+import type { DdayEvent, Recurring } from '@/types';
 
 const DEFAULT_COLOR = '#6366F1';
 
@@ -33,7 +34,7 @@ export function EditPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: '', target_date: '', note: '', color: DEFAULT_COLOR });
+  const [form, setForm] = useState({ title: '', target_date: '', note: '', color: DEFAULT_COLOR, recurring: 'none' as Recurring });
 
   useEffect(() => {
     if (!id) return;
@@ -45,6 +46,7 @@ export function EditPage() {
           target_date: e.target_date,
           note: e.note ?? '',
           color: e.color ?? DEFAULT_COLOR,
+          recurring: e.recurring ?? 'none',
         });
       })
       .catch(() => setErrorMsg('이벤트를 불러오지 못했습니다.'))
@@ -67,6 +69,7 @@ export function EditPage() {
         target_date: form.target_date,
         note: form.note?.trim() || undefined,
         color: form.color,
+        recurring: form.recurring,
       });
       navigate(`/events/${event.id}`);
     } catch {
@@ -137,6 +140,13 @@ export function EditPage() {
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-text">{TEXT.create.colorLabel}</label>
               <ColorPicker value={form.color} onChange={(c) => setForm((p) => ({ ...p, color: c }))} />
+            </div>
+
+            <div className="bg-bg rounded-xl px-4 py-3">
+              <RecurringToggle
+                value={form.recurring}
+                onChange={(v: Recurring) => setForm((p) => ({ ...p, recurring: v }))}
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">

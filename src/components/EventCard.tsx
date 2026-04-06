@@ -1,66 +1,62 @@
 import { Link } from 'react-router-dom';
 import type { DdayEvent } from '@/types';
 import { TEXT } from '@/constants/text';
+import { getEffectiveDate, recurringLabel } from '@/utils/recurring';
 
 interface EventCardProps {
   event: DdayEvent;
 }
 
 function getDayDiff(targetDate: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const target = new Date(targetDate);
-  target.setHours(0, 0, 0, 0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const target = new Date(targetDate); target.setHours(0, 0, 0, 0);
   return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 export function EventCard({ event }: EventCardProps) {
-  const diff = getDayDiff(event.target_date);
+  const effectiveDate = getEffectiveDate(event);
+  const diff = getDayDiff(effectiveDate);
   const label = TEXT.landing.ddayLabel(diff);
   const relative = TEXT.landing.relativeLabel(diff);
   const accentColor = event.color ?? 'var(--color-primary)';
+  const recurring = recurringLabel(event.recurring);
 
   return (
     <Link
       to={`/events/${event.id}`}
-      className="card-hover-accent bg-surface rounded-2xl shadow-card border border-border p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.97] block"
+      className="card-hover-accent bg-surface rounded-2xl shadow-card border border-border p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.97] block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      aria-label={`${event.title}, ${label}, ${relative}`}
     >
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-lg font-bold leading-tight truncate text-text">
-          {event.title}
-        </h3>
+        <div className="flex flex-col gap-1 min-w-0">
+          <h3 className="text-lg font-bold leading-tight truncate text-text">
+            {event.title}
+          </h3>
+          {recurring && (
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary w-fit">
+              {recurring}
+            </span>
+          )}
+        </div>
         <div className="flex flex-col items-end shrink-0">
-          <span
-            className="text-xl font-bold tabular-nums"
-            style={{ color: accentColor }}
-          >
+          <span className="text-xl font-bold tabular-nums" style={{ color: accentColor }}>
             {label}
           </span>
-          <span className="text-xs text-text-secondary mt-0.5">
-            {relative}
-          </span>
+          <span className="text-xs text-text-secondary mt-0.5">{relative}</span>
         </div>
       </div>
 
       {event.note && (
-        <p className="text-sm line-clamp-2 text-text-secondary">
-          {event.note}
-        </p>
+        <p className="text-sm line-clamp-2 text-text-secondary">{event.note}</p>
       )}
 
       <div className="flex items-center gap-2 mt-auto pt-2 border-t border-border">
-        <span
-          className="w-2.5 h-2.5 rounded-full shrink-0"
-          style={{ background: accentColor }}
-        />
-        <span className="text-sm text-text-secondary">
-          {formatDate(event.target_date)}
-        </span>
+        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: accentColor }} aria-hidden="true" />
+        <span className="text-sm text-text-secondary">{formatDate(effectiveDate)}</span>
       </div>
     </Link>
   );

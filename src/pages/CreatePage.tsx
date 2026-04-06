@@ -2,7 +2,8 @@ import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createEvent } from '@/services/ddayService';
 import { TEXT } from '@/constants/text';
-import type { CreateDdayEventInput } from '@/types';
+import { RecurringToggle } from '@/components/RecurringToggle';
+import type { CreateDdayEventInput, Recurring } from '@/types';
 
 const DEFAULT_COLOR = '#6366F1';
 
@@ -42,6 +43,7 @@ export function CreatePage() {
     target_date: '',
     note: '',
     color: DEFAULT_COLOR,
+    recurring: 'none',
   });
 
   function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -138,6 +140,13 @@ export function CreatePage() {
               <ColorPicker
                 value={form.color ?? DEFAULT_COLOR}
                 onChange={(c) => setForm((prev) => ({ ...prev, color: c }))}
+              />
+            </div>
+
+            <div className="bg-bg rounded-xl px-4 py-3">
+              <RecurringToggle
+                value={form.recurring ?? 'none'}
+                onChange={(v: Recurring) => setForm((prev) => ({ ...prev, recurring: v }))}
               />
             </div>
 

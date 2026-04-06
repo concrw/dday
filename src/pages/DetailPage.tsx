@@ -7,6 +7,7 @@ import { CountdownBlock } from '@/components/CountdownBlock';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ShareCardModal } from '@/components/ShareCardModal';
 import { TEXT } from '@/constants/text';
+import { getEffectiveDate, recurringLabel } from '@/utils/recurring';
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -129,6 +130,8 @@ export function DetailPage() {
   }
 
   const accentColor = event.color ?? 'var(--color-primary)';
+  const effectiveDate = getEffectiveDate(event);
+  const recurring = recurringLabel(event.recurring);
 
   return (
     <div className="min-h-screen bg-bg animate-page">
@@ -137,18 +140,24 @@ export function DetailPage() {
           <Link
             to="/"
             className="text-sm font-medium transition-all duration-200 hover:opacity-75 text-primary"
+            aria-label="홈으로 돌아가기"
           >
             {TEXT.detail.backButton}
           </Link>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <h1 className="text-3xl md:text-4xl font-bold leading-tight text-text">
             {event.title}
           </h1>
+          {recurring && (
+            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary w-fit">
+              {recurring}
+            </span>
+          )}
         </div>
 
-        <CountdownSection targetDate={event.target_date} color={accentColor} />
+        <CountdownSection targetDate={effectiveDate} color={accentColor} />
 
         {event.note && (
           <div className="bg-surface rounded-2xl border border-border p-6">
