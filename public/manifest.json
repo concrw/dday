@@ -1,7 +1,7 @@
 {
-  "name": "D-Day 카운터",
+  "name": "D-Day Counter",
   "short_name": "DDay",
-  "description": "중요한 날을 기억하고 카운트다운하세요.",
+  "description": "Track your most important dates and count down in real time.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
