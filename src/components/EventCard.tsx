@@ -14,66 +14,75 @@ function getDayDiff(targetDate: string): number {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-function DdayDisplay({ diff, color }: { diff: number; color: string }) {
-  const label = TEXT.landing.ddayLabel(diff);
-  // split "D-25" into prefix and number for styling
-  const match = label.match(/^(D[-+]?)(\d+)$/);
-  if (match) {
-    return (
-      <div className="font-num leading-none" style={{ color }}>
-        <span className="text-sm opacity-60">{match[1]}</span>
-        <span className="text-5xl font-medium tracking-tight">{match[2]}</span>
-      </div>
-    );
-  }
-  return (
-    <div className="font-num text-4xl font-medium leading-none" style={{ color }}>
-      {label}
-    </div>
-  );
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 export function EventCard({ event }: EventCardProps) {
   const effectiveDate = getEffectiveDate(event);
   const diff = getDayDiff(effectiveDate);
+  const label = TEXT.landing.ddayLabel(diff);
   const accentColor = event.color ?? 'var(--color-accent)';
   const recurring = recurringLabel(event.recurring);
-  const isPast = diff < 0;
+
+  // split "D-25" → prefix "D-" + number "25"
+  const match = label.match(/^(D[-+]?)(\d+)$/);
+  const prefix = match ? match[1] : null;
+  const numStr = match ? match[2] : label;
 
   return (
     <Link
       to={`/events/${event.id}`}
-      className="group relative flex flex-col justify-between rounded-2xl border border-border bg-surface/60 backdrop-blur-sm p-5 gap-4 transition-all duration-200 hover:border-white/15 hover:bg-surface/80 focus:outline-none"
-      aria-label={`${event.title}, ${TEXT.landing.ddayLabel(diff)}`}
+      className="group relative flex flex-col justify-between rounded-2xl border border-border bg-surface/50 backdrop-blur-sm px-5 pt-5 pb-4 transition-all duration-200 hover:border-white/15 hover:bg-surface/70 focus:outline-none overflow-hidden"
+      style={{ minHeight: '160px' }}
+      aria-label={`${event.title}, ${label}`}
     >
-      {/* Top: D-day number */}
-      <DdayDisplay diff={diff} color={accentColor} />
+      {/* Color accent — left edge */}
+      <div
+        className="absolute left-0 top-0 bottom-0 w-[2px]"
+        style={{ background: accentColor, opacity: 0.7 }}
+      />
 
-      {/* Bottom: title + meta */}
-      <div className="flex flex-col gap-1.5">
-        <h3 className="text-sm font-semibold text-text leading-tight truncate">
+      {/* Big number */}
+      <div className="flex items-start gap-1 leading-none font-num">
+        {prefix && (
+          <span
+            className="text-sm font-light mt-1 tracking-wider"
+            style={{ color: accentColor, opacity: 0.6 }}
+          >
+            {prefix}
+          </span>
+        )}
+        <span
+          className="font-black tracking-tighter"
+          style={{
+            fontSize: 'clamp(3.5rem, 12vw, 5rem)',
+            lineHeight: 1,
+            color: accentColor,
+          }}
+        >
+          {numStr}
+        </span>
+      </div>
+
+      {/* Bottom meta */}
+      <div className="flex flex-col gap-0.5 mt-3">
+        <h3
+          className="font-light text-white/90 leading-snug truncate"
+          style={{ fontSize: 'clamp(0.8rem, 2.5vw, 1rem)' }}
+        >
           {event.title}
         </h3>
         <div className="flex items-center gap-2">
           {recurring && (
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-border text-text-muted">
+            <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full border border-white/10 text-white/30 uppercase tracking-wider">
               {recurring}
             </span>
           )}
-          <span className={`text-xs ${isPast ? 'text-text-muted' : 'text-text-secondary'}`}>
+          <span className="text-[11px] font-light text-white/25 tracking-wide">
             {formatDate(effectiveDate)}
           </span>
         </div>
       </div>
-
-      {/* Color accent bar */}
-      <div
-        className="absolute left-0 top-4 bottom-4 w-[2px] rounded-full opacity-60"
-        style={{ background: accentColor }}
-      />
     </Link>
   );
 }

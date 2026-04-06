@@ -48,8 +48,8 @@ function CountdownSection({ targetDate, color }: { targetDate: string; color: st
           <div className="font-num leading-none" style={{ color }}>
             <span className="text-2xl md:text-3xl opacity-40 tracking-wider">{match[1]}</span>
             <span
-              className="block font-medium tracking-tighter"
-              style={{ fontSize: 'clamp(6rem, 20vw, 14rem)', lineHeight: 1 }}
+              className="block font-black tracking-tighter"
+              style={{ fontSize: 'clamp(7rem, 28vw, 18rem)', lineHeight: 0.9 }}
             >
               {match[2]}
             </span>
@@ -59,7 +59,7 @@ function CountdownSection({ targetDate, color }: { targetDate: string; color: st
             {label}
           </div>
         )}
-        <p className="text-text-muted text-sm mt-4">{formatDate(targetDate)}</p>
+        <p className="text-text-muted text-xs font-light tracking-widest mt-5 uppercase">{formatDate(targetDate)}</p>
       </div>
 
       {/* HH:MM:SS row */}
@@ -172,7 +172,7 @@ export function DetailPage() {
 
         {/* Title */}
         <div className="flex items-center gap-3 mt-2">
-          <h1 className="text-lg font-semibold text-text">{event.title}</h1>
+          <h1 className="text-sm font-light text-white/50 tracking-wide">{event.title}</h1>
           {recurring && (
             <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-border text-text-muted">
               {recurring}
