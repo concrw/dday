@@ -101,14 +101,14 @@ export function LandingPage() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="이벤트 검색..."
+                placeholder="Search events..."
                 className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-150"
               />
             </div>
             <div className="flex gap-2 shrink-0">
-              <SortButton active={sort === 'date_asc'} onClick={() => setSort('date_asc')}>날짜 오름차순</SortButton>
-              <SortButton active={sort === 'date_desc'} onClick={() => setSort('date_desc')}>날짜 내림차순</SortButton>
-              <SortButton active={sort === 'created'} onClick={() => setSort('created')}>최신순</SortButton>
+              <SortButton active={sort === 'date_asc'} onClick={() => setSort('date_asc')}>Nearest</SortButton>
+              <SortButton active={sort === 'date_desc'} onClick={() => setSort('date_desc')}>Furthest</SortButton>
+              <SortButton active={sort === 'created'} onClick={() => setSort('created')}>Recent</SortButton>
             </div>
           </div>
         )}
