@@ -69,7 +69,7 @@ export function CreatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg animate-page">
       <section className="py-12 px-4 bg-gradient-to-br from-primary to-primary-dark">
         <div className="max-w-xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white">{TEXT.create.pageTitle}</h1>

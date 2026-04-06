@@ -20,24 +20,60 @@ function getDayDiff(targetDate: string): number {
   return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function CountdownSection({ targetDate, color }: { targetDate: string; color: string }) {
+function CelebrationBurst() {
+  const dots = Array.from({ length: 12 }, (_, i) => i);
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+      {dots.map((i) => (
+        <span
+          key={i}
+          className="absolute w-2 h-2 rounded-full opacity-0"
+          style={{
+            background: i % 3 === 0 ? 'var(--color-accent)' : i % 3 === 1 ? '#fff' : 'var(--color-primary)',
+            top: `${20 + Math.sin((i / 12) * Math.PI * 2) * 35}%`,
+            left: `${50 + Math.cos((i / 12) * Math.PI * 2) * 40}%`,
+            animation: `fadeSlideUp 0.6s ease ${i * 0.05}s forwards`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function CountdownSection({ targetDate }: { targetDate: string; color: string }) {
   const countdown = useCountdown(targetDate);
   const diff = getDayDiff(targetDate);
   const label = TEXT.detail.ddayLabel(diff);
+  const isToday = diff === 0;
 
   return (
-    <div className="rounded-2xl p-6 md:p-10 flex flex-col items-center gap-6 bg-gradient-to-br from-primary-dark to-[#312E81]">
-      <div className="text-5xl md:text-6xl font-bold" style={{ color }}>
+    <div className={`relative rounded-2xl p-6 md:p-10 flex flex-col items-center gap-6 ${
+      isToday
+        ? 'bg-gradient-to-br from-accent to-[#D97706]'
+        : 'bg-gradient-to-br from-primary-dark to-[#312E81]'
+    }`}>
+      {isToday && <CelebrationBurst />}
+      <div className="text-5xl md:text-6xl font-bold text-white" style={{ transition: 'color 0.4s ease' }}>
         {label}
       </div>
 
-      {!countdown.isPast && !countdown.isToday && (
+      {isToday && (
+        <p className="text-white/90 text-lg font-semibold text-center">
+          오늘이 바로 그 날입니다!
+        </p>
+      )}
+
+      {!countdown.isPast && !isToday && (
         <div className="flex flex-wrap justify-center gap-4">
           <CountdownBlock value={countdown.days} label={TEXT.detail.daysUnit} />
           <CountdownBlock value={countdown.hours} label={TEXT.detail.hoursUnit} />
           <CountdownBlock value={countdown.minutes} label={TEXT.detail.minutesUnit} />
           <CountdownBlock value={countdown.seconds} label={TEXT.detail.secondsUnit} pulse />
         </div>
+      )}
+
+      {countdown.isPast && !isToday && (
+        <p className="text-white/70 text-base">{Math.abs(diff)}일 전에 지나갔습니다.</p>
       )}
 
       <p className="text-white/60 text-sm">{formatDate(targetDate)}</p>
@@ -93,7 +129,7 @@ export function DetailPage() {
   const accentColor = event.color ?? 'var(--color-primary)';
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg animate-page">
       <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-6">
         <div className="flex items-center gap-3">
           <Link
@@ -139,10 +175,16 @@ export function DetailPage() {
         )}
 
         <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            to={`/events/${event.id}/edit`}
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-[0.97]"
+          >
+            수정
+          </Link>
           <button
             type="button"
             onClick={handleShare}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-accent hover:bg-accent-dark transition-all duration-200 hover:scale-105"
+            className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-accent hover:bg-accent-dark transition-all duration-200 hover:scale-105 active:scale-[0.97]"
           >
             {shareCopied ? TEXT.detail.shareSuccess : TEXT.detail.shareButton}
           </button>
