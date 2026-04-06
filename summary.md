@@ -1,43 +1,27 @@
-# Design System: CSS Tokens + Pretendard Font + Inline Style Removal
+# Micro-animations — Implementation Summary
 
 ## Status: SUCCESS
 
 ## Changes
 
-### 1. Pretendard Font
-- Installed `@fontsource/pretendard` (400/500/600/700 weights)
-- Imported in `main.tsx` and set as default `font-family` in `index.css`
-- Configured in Tailwind v4 `@theme` as `--font-sans`
+### `src/pages/LandingPage.tsx`
+- Stagger delay corrected: `i * 60` → `i * 50` ms per card (task spec requires 50ms)
 
-### 2. CSS Custom Properties (Design Tokens)
-Defined in both `:root` and `@theme` in `index.css`:
-- `--color-primary: #6366F1` (indigo)
-- `--color-primary-dark: #4F46E5`
-- `--color-accent: #F59E0B` (amber)
-- `--color-accent-dark: #D97706`
-- `--color-bg: #F8FAFC`
-- `--color-surface: #FFFFFF`
-- `--color-text: #1F2937`
-- `--color-text-secondary: #6B7280`
-- `--color-text-muted: #9CA3AF`
-- `--color-error: #EF4444`
-- `--color-border: #E5E7EB`
-- `--radius-card: 16px`, `--radius-button: 12px`
-- `--shadow-card` for consistent card shadows
+### `src/pages/DetailPage.tsx`
+- Root div: added `animate-page` class for fade-in on mount
+- D-day label: added `transition: 'color 0.4s ease'` so color smoothly transitions when sign changes (past / today / future)
 
-### 3. Inline Style Removal
-Replaced all static `style={{}}` props across 7 components with Tailwind utility classes:
-- `EventCard.tsx`, `LandingPage.tsx`, `DetailPage.tsx`, `CreatePage.tsx`, `NavBar.tsx`, `CountdownBlock.tsx`, `LoadingSpinner.tsx`
+### `src/pages/CreatePage.tsx`
+- Root div: added `animate-page` class for fade-in on mount
 
-Only 4 inline styles remain for dynamic user-chosen accent colors (cannot be static).
-
-### 4. Border Radius Consistency
-- Cards: `rounded-2xl` (16px)
-- Buttons: `rounded-xl` (12px)
-- Inputs: `rounded-lg`
-
-### 5. Color Palette Update
-Updated default accent to `#6366F1` (indigo). Color picker options: Indigo, Violet, Amber, Red, Emerald, Pink, Cyan.
+## Already in place (no changes needed)
+- `@keyframes fadeSlideUp`, `fadePage`, `pulse-scale` in `index.css`
+- `.animate-card`, `.animate-page`, `.animate-pulse-seconds` utility classes
+- `.card-hover-accent` with `::before` pseudo-element for 4px left border on hover
+- `EventCard` already uses `card-hover-accent` class
+- `CountdownBlock` already applies `animate-pulse-seconds` when `pulse={true}`
+- `LandingPage` already used `animate-page` and staggered `.animate-card` wrappers
+- `DetailPage` already passes `pulse` to the seconds `CountdownBlock`
 
 ## Build
-`npm run build` passes with 0 errors.
+`npm run build` — 81 modules transformed, 0 errors, built in 141ms.

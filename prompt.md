@@ -2,7 +2,7 @@ You are a specialist agent inside AOS (Agent Operating System).
 You do not own persistent state.
 
 ## Output: create ./result.json (MANDATORY) and ./summary.md
-result.json schema: {"schema_version":"execution_result_v1","task_id":"0eb8899e-0c74-4d50-ad40-394c63574059","status":"SUCCESS|FAILED","summary":"min 20 chars","changed_files":[],"artifacts":[],"tests":{"ran":false,"passed":false},"approval_flags":[],"issues":[],"next_actions":[]}
+result.json schema: {"schema_version":"execution_result_v1","task_id":"3fbe20d2-caa0-446e-81fa-023a30b2380a","status":"SUCCESS|FAILED","summary":"min 20 chars","changed_files":[],"artifacts":[],"tests":{"ran":false,"passed":false},"approval_flags":[],"issues":[],"next_actions":[]}
 Create result.json FIRST, update with final results LAST. List ALL changed files.
 
 Rules:
@@ -22,9 +22,9 @@ Rules:
 ```json
 {
   "task": {
-    "id": "0eb8899e-0c74-4d50-ad40-394c63574059",
-    "title": "[dday] Design system: CSS tokens + Pretendard font + remove inline styles",
-    "objective": "Refactor the dday app to use a proper design system.\n\nRepo: /Users/brandactivist/Desktop/dday\n\nTasks:\n1. Install Pretendard font via @fontsource/pretendard and apply as default font-family in index.css\n2. Define CSS custom properties (--color-primary, --color-bg, --color-surface, --color-text, --color-accent, --radius-card, --shadow-card) in :root inside index.css\n3. Replace ALL inline style={{}} color/background/borderRadius props in EventCard.tsx, LandingPage.tsx, DetailPage.tsx, CreatePage.tsx, NavBar.tsx with Tailwind classes or CSS variables\n4. Apply consistent border-radius using rounded-2xl (16px) for cards, rounded-xl (12px) for buttons\n5. Ensure the color palette is warm and modern — primary: #6366F1 (indigo), accent: #F59E0B (amber), bg: #F8FAFC\n6. Build must pass with 0 errors"
+    "id": "3fbe20d2-caa0-446e-81fa-023a30b2380a",
+    "title": "[dday] Micro-animations: page transitions + card entrance + countdown pulse",
+    "objective": "Add polished micro-animations to the dday app using CSS transitions (no new libraries).\n\nRepo: /Users/brandactivist/Desktop/dday\n\n1. Add fade-in + slide-up entrance animation to EventCard grid items (staggered, 50ms delay per card using index)\n   - Use @keyframes in index.css: fadeSlideUp { from: opacity:0, translateY(12px); to: opacity:1, translateY(0) }\n   - Apply via animation: fadeSlideUp 0.3s ease forwards on each card\n2. Add countdown pulse to the seconds block in CountdownBlock.tsx:\n   - Subtle scale pulse (scale 1 → 1.05 → 1) every second in sync with countdown tick\n3. Add page-level fade transition: wrap page content in a div with opacity animation on mount\n4. Improve hover states: cards should show a colored left border accent on hover (4px, primary color)\n5. Smooth color transition on the D-day label when it changes sign (past/today/future)\n6. Build must pass with 0 errors"
   },
   "constraints": "{}",
   "context": {
@@ -41,28 +41,26 @@ Rules:
   },
   "plan": {
     "steps": [
-      "Step 1: Install Pretendard font via npm install @fontsource/pretendard",
-      "Step 2: Update index.css to import Pretendard, define CSS custom properties (:root with --color-primary: #6366F1, --color-accent: #F59E0B, --color-bg: #F8FAFC, --color-text, --color-surface, --radius-card: 16px, --radius-button: 12px, --shadow-card), and set global font-family to Pretendard",
-      "Step 3: Create tailwind.config.js to extend theme with custom colors and border-radius values from CSS variables, set default font-family to Pretendard",
-      "Step 4: Refactor EventCard.tsx — replace all inline style={{}} (colors, backgroundColor, borderRadius, boxShadow) with Tailwind classes (bg-*, text-*, rounded-*) and CSS var() fallbacks",
-      "Step 5: Refactor LandingPage.tsx, DetailPage.tsx, CreatePage.tsx, NavBar.tsx — systematically replace inline styles with Tailwind classes or CSS variables",
-      "Step 6: Verify all border-radius values: cards use rounded-2xl (16px), buttons use rounded-xl (12px)",
-      "Step 7: Run npm run build and verify 0 errors, then npm run dev to browser-test all pages (landing, create, detail card rendering, navbar styling)",
-      "Step 8: Commit changes with proper git author and push"
+      "Step 1: Verify project structure — check for index.css and locate EventCard, CountdownBlock, and page-level components",
+      "Step 2: Add @keyframes (fadeSlideUp, pulse, fadeIn, borderAccent, colorShift) to index.css with proper easing",
+      "Step 3: Update EventCard component to apply staggered fadeSlideUp animation using card index × 50ms delay",
+      "Step 4: Update CountdownBlock to apply pulse animation synchronized with countdown seconds tick",
+      "Step 5: Wrap page content in fade-in transition div with opacity animation on mount",
+      "Step 6: Add hover state to EventCard with colored left border (4px) using primary color",
+      "Step 7: Add smooth color transition to D-day label component for past/today/future state changes",
+      "Step 8: Run build, verify 0 errors, test animations in browser for timing and smoothness"
     ],
     "pre_checks": [
-      "npm run build passes with current code (0 errors)",
-      "Current app renders all pages without layout issues",
-      "Verify Tailwind v4 is properly loaded in vite.config.ts",
-      "Grep all components to identify all inline style={{}} instances",
-      "Check that no dynamic color values are generated via JavaScript"
+      "Verify dday project exists and has valid package.json",
+      "Confirm index.css or equivalent main stylesheet exists",
+      "Locate EventCard, CountdownBlock, and page-level components",
+      "Check current build status passes before starting"
     ],
     "risk_areas": [
-      "EventCard, LandingPage, DetailPage, CreatePage, NavBar component layout breakage from style removal",
-      "Font loading delay or Pretendard not applying correctly",
-      "CSS variable fallbacks may not work in older browsers",
-      "Tailwind purge/build might fail if custom classes are dynamically generated",
-      "Color precision — must verify #6366F1, #F59E0B, #F8FAFC render exactly as intended"
+      "CSS animation timing and stagger delays not applying correctly",
+      "CountdownBlock pulse animation falling out of sync with actual countdown",
+      "Layout shift from animations if transform-origin not set properly",
+      "Build errors from CSS syntax or missing vendor prefixes"
     ],
     "estimated_complexity": "M"
   },
@@ -91,17 +89,17 @@ Rules:
 
 
 ## Execution Plan (follow these steps):
-1. Step 1: Install Pretendard font via npm install @fontsource/pretendard
-2. Step 2: Update index.css to import Pretendard, define CSS custom properties (:root with --color-primary: #6366F1, --color-accent: #F59E0B, --color-bg: #F8FAFC, --color-text, --color-surface, --radius-card: 16px, --radius-button: 12px, --shadow-card), and set global font-family to Pretendard
-3. Step 3: Create tailwind.config.js to extend theme with custom colors and border-radius values from CSS variables, set default font-family to Pretendard
-4. Step 4: Refactor EventCard.tsx — replace all inline style={{}} (colors, backgroundColor, borderRadius, boxShadow) with Tailwind classes (bg-*, text-*, rounded-*) and CSS var() fallbacks
-5. Step 5: Refactor LandingPage.tsx, DetailPage.tsx, CreatePage.tsx, NavBar.tsx — systematically replace inline styles with Tailwind classes or CSS variables
-6. Step 6: Verify all border-radius values: cards use rounded-2xl (16px), buttons use rounded-xl (12px)
-7. Step 7: Run npm run build and verify 0 errors, then npm run dev to browser-test all pages (landing, create, detail card rendering, navbar styling)
-8. Step 8: Commit changes with proper git author and push
+1. Step 1: Verify project structure — check for index.css and locate EventCard, CountdownBlock, and page-level components
+2. Step 2: Add @keyframes (fadeSlideUp, pulse, fadeIn, borderAccent, colorShift) to index.css with proper easing
+3. Step 3: Update EventCard component to apply staggered fadeSlideUp animation using card index × 50ms delay
+4. Step 4: Update CountdownBlock to apply pulse animation synchronized with countdown seconds tick
+5. Step 5: Wrap page content in fade-in transition div with opacity animation on mount
+6. Step 6: Add hover state to EventCard with colored left border (4px) using primary color
+7. Step 7: Add smooth color transition to D-day label component for past/today/future state changes
+8. Step 8: Run build, verify 0 errors, test animations in browser for timing and smoothness
 
-Risk areas: EventCard, LandingPage, DetailPage, CreatePage, NavBar component layout breakage from style removal, Font loading delay or Pretendard not applying correctly, CSS variable fallbacks may not work in older browsers, Tailwind purge/build might fail if custom classes are dynamically generated, Color precision — must verify #6366F1, #F59E0B, #F8FAFC render exactly as intended
-Pre-checks: npm run build passes with current code (0 errors), Current app renders all pages without layout issues, Verify Tailwind v4 is properly loaded in vite.config.ts, Grep all components to identify all inline style={{}} instances, Check that no dynamic color values are generated via JavaScript
+Risk areas: CSS animation timing and stagger delays not applying correctly, CountdownBlock pulse animation falling out of sync with actual countdown, Layout shift from animations if transform-origin not set properly, Build errors from CSS syntax or missing vendor prefixes
+Pre-checks: Verify dday project exists and has valid package.json, Confirm index.css or equivalent main stylesheet exists, Locate EventCard, CountdownBlock, and page-level components, Check current build status passes before starting
 
 ## Quality Standards (MUST follow — violations fail QA):
 - [ERROR] No secrets in frontend code: API keys, tokens, passwords must be in .env, never in source (weight: 3.0, violations: 0)
