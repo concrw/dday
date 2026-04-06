@@ -3,83 +3,110 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDdayEvent } from '@/hooks/useDdayEvent';
 import { useCountdown } from '@/hooks/useCountdown';
 import { deleteEvent } from '@/services/ddayService';
-import { CountdownBlock } from '@/components/CountdownBlock';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ShareCardModal } from '@/components/ShareCardModal';
+import { AuroraBlur } from '@/components/backgrounds/AuroraBlur';
 import { TEXT } from '@/constants/text';
 import { getEffectiveDate, recurringLabel } from '@/utils/recurring';
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function getDayDiff(targetDate: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const target = new Date(targetDate);
-  target.setHours(0, 0, 0, 0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const target = new Date(targetDate); target.setHours(0, 0, 0, 0);
   return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function CelebrationBurst() {
-  const dots = Array.from({ length: 12 }, (_, i) => i);
+function CountdownUnit({ value, label }: { value: number; label: string }) {
+  const padded = String(value).padStart(2, '0');
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-      {dots.map((i) => (
-        <span
-          key={i}
-          className="absolute w-2 h-2 rounded-full opacity-0"
-          style={{
-            background: i % 3 === 0 ? 'var(--color-accent)' : i % 3 === 1 ? '#fff' : 'var(--color-primary)',
-            top: `${20 + Math.sin((i / 12) * Math.PI * 2) * 35}%`,
-            left: `${50 + Math.cos((i / 12) * Math.PI * 2) * 40}%`,
-            animation: `fadeSlideUp 0.6s ease ${i * 0.05}s forwards`,
-          }}
-        />
-      ))}
+    <div className="flex flex-col items-center gap-1">
+      <span className="font-num text-4xl md:text-5xl font-medium text-white tabular-nums leading-none">
+        {padded}
+      </span>
+      <span className="text-[10px] uppercase tracking-widest text-text-muted">{label}</span>
     </div>
   );
 }
 
-function CountdownSection({ targetDate }: { targetDate: string; color: string }) {
+function CountdownSection({ targetDate, color }: { targetDate: string; color: string }) {
   const countdown = useCountdown(targetDate);
   const diff = getDayDiff(targetDate);
   const label = TEXT.detail.ddayLabel(diff);
   const isToday = diff === 0;
+  const isPast = diff < 0;
+
+  const match = label.match(/^(D[-+]?)(\d+)$/);
 
   return (
-    <div className={`relative rounded-2xl p-6 md:p-10 flex flex-col items-center gap-6 ${
-      isToday
-        ? 'bg-gradient-to-br from-accent to-[#D97706]'
-        : 'bg-gradient-to-br from-primary-dark to-[#312E81]'
-    }`}>
-      {isToday && <CelebrationBurst />}
-      <div className="text-5xl md:text-6xl font-bold text-white" style={{ transition: 'color 0.4s ease' }}>
-        {label}
+    <div className="flex flex-col items-center gap-8 py-16">
+      {/* Big D-number */}
+      <div className="text-center">
+        {match ? (
+          <div className="font-num leading-none" style={{ color }}>
+            <span className="text-2xl md:text-3xl opacity-40 tracking-wider">{match[1]}</span>
+            <span
+              className="block font-medium tracking-tighter"
+              style={{ fontSize: 'clamp(6rem, 20vw, 14rem)', lineHeight: 1 }}
+            >
+              {match[2]}
+            </span>
+          </div>
+        ) : (
+          <div className="font-num text-8xl font-medium" style={{ color }}>
+            {label}
+          </div>
+        )}
+        <p className="text-text-muted text-sm mt-4">{formatDate(targetDate)}</p>
       </div>
 
-      {isToday && (
-        <p className="text-white/90 text-lg font-semibold text-center">
-          오늘이 바로 그 날입니다!
-        </p>
-      )}
-
-      {!countdown.isPast && !isToday && (
-        <div className="flex flex-wrap justify-center gap-4">
-          <CountdownBlock value={countdown.days} label={TEXT.detail.daysUnit} />
-          <CountdownBlock value={countdown.hours} label={TEXT.detail.hoursUnit} />
-          <CountdownBlock value={countdown.minutes} label={TEXT.detail.minutesUnit} />
-          <CountdownBlock value={countdown.seconds} label={TEXT.detail.secondsUnit} pulse />
+      {/* HH:MM:SS row */}
+      {!isPast && !isToday && (
+        <div className="flex items-end gap-6 md:gap-10">
+          <CountdownUnit value={countdown.hours} label={TEXT.detail.hoursUnit} />
+          <span className="font-num text-3xl text-text-muted mb-4 leading-none">:</span>
+          <CountdownUnit value={countdown.minutes} label={TEXT.detail.minutesUnit} />
+          <span className="font-num text-3xl text-text-muted mb-4 leading-none">:</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className={`font-num text-4xl md:text-5xl font-medium tabular-nums leading-none ${countdown.seconds % 2 === 0 ? 'text-white' : 'text-white/60'} transition-colors duration-500`}>
+              {String(countdown.seconds).padStart(2, '0')}
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-text-muted">{TEXT.detail.secondsUnit}</span>
+          </div>
         </div>
       )}
 
-      {countdown.isPast && !isToday && (
-        <p className="text-white/70 text-base">{Math.abs(diff)}일 전에 지나갔습니다.</p>
+      {isToday && (
+        <p className="text-lg font-semibold text-accent">Today is the day.</p>
       )}
 
-      <p className="text-white/60 text-sm">{formatDate(targetDate)}</p>
+      {isPast && (
+        <p className="text-sm text-text-muted">{Math.abs(diff)} days ago</p>
+      )}
     </div>
+  );
+}
+
+function ActionButton({ onClick, children, variant = 'ghost' }: {
+  onClick?: () => void;
+  children: React.ReactNode;
+  variant?: 'primary' | 'ghost' | 'danger';
+}) {
+  const styles = {
+    primary: 'bg-white text-black hover:bg-white/90',
+    ghost: 'border border-border text-text-secondary hover:border-white/20 hover:text-white',
+    danger: 'border border-white/10 text-red-400 hover:border-red-400/40',
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex-1 min-h-11 rounded-full text-sm font-semibold transition-all duration-200 ${styles[variant]}`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -111,109 +138,82 @@ export function DetailPage() {
       await navigator.clipboard.writeText(window.location.href);
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
-    } catch {
-      // fallback: select the URL bar
-    }
+    } catch { /* noop */ }
   }
 
   if (loading) return <LoadingSpinner text={TEXT.detail.loadingText} />;
 
   if (error || !event) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-bg">
-        <p className="text-lg text-error">{TEXT.detail.errorText}</p>
-        <Link to="/" className="text-sm underline text-primary">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="text-sm text-error">{TEXT.detail.errorText}</p>
+        <Link to="/" className="text-xs text-text-muted hover:text-white transition-colors">
           {TEXT.detail.backButton}
         </Link>
       </div>
     );
   }
 
-  const accentColor = event.color ?? 'var(--color-primary)';
+  const accentColor = event.color ?? 'var(--color-accent)';
   const effectiveDate = getEffectiveDate(event);
   const recurring = recurringLabel(event.recurring);
 
   return (
-    <div className="min-h-screen bg-bg animate-page">
-      <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-6">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="text-sm font-medium transition-all duration-200 hover:opacity-75 text-primary"
-            aria-label="홈으로 돌아가기"
-          >
+    <div className="relative min-h-screen bg-bg animate-page">
+      <AuroraBlur />
+
+      <div className="relative z-10 max-w-2xl mx-auto px-4">
+        {/* Back */}
+        <div className="pt-6 pb-2">
+          <Link to="/" className="text-xs text-text-muted hover:text-white transition-colors">
             {TEXT.detail.backButton}
           </Link>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight text-text">
-            {event.title}
-          </h1>
+        {/* Title */}
+        <div className="flex items-center gap-3 mt-2">
+          <h1 className="text-lg font-semibold text-text">{event.title}</h1>
           {recurring && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary w-fit">
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-border text-text-muted">
               {recurring}
             </span>
           )}
         </div>
 
+        {/* Countdown hero */}
         <CountdownSection targetDate={effectiveDate} color={accentColor} />
 
+        {/* Note */}
         {event.note && (
-          <div className="bg-surface rounded-2xl border border-border p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest mb-2 text-text-muted">
+          <div className="rounded-2xl border border-border bg-surface/40 backdrop-blur-sm p-5 mb-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted mb-2">
               {TEXT.detail.noteLabel}
             </p>
-            <p className="text-base text-text">
-              {event.note}
-            </p>
+            <p className="text-sm text-text-secondary leading-relaxed">{event.note}</p>
           </div>
         )}
 
-        <div className="bg-surface rounded-2xl border border-border p-6">
-          <p className="text-xs font-semibold uppercase tracking-widest mb-1 text-text-muted">
-            {TEXT.detail.createdLabel}
-          </p>
-          <p className="text-sm text-text-secondary">
-            {formatDate(event.created_at.split('T')[0])}
-          </p>
-        </div>
-
         {deleteError && (
-          <p className="text-sm px-4 py-3 rounded-lg bg-error-bg text-error">
-            {deleteError}
-          </p>
+          <p className="text-xs px-4 py-3 rounded-xl bg-error-bg text-error mb-4">{deleteError}</p>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-2 pb-12">
           <Link
             to={`/events/${event.id}/edit`}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-[0.97]"
+            className="flex-1 min-h-11 rounded-full text-sm font-semibold text-black bg-white hover:bg-white/90 transition-all duration-200 flex items-center justify-center"
           >
-            수정
+            Edit
           </Link>
-          <button
-            type="button"
-            onClick={() => setShowShareCard(true)}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-accent hover:bg-accent-dark transition-all duration-200 hover:scale-105 active:scale-[0.97]"
-          >
-            카드 공유
-          </button>
-          <button
-            type="button"
-            onClick={handleShare}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold border border-border text-text-secondary bg-surface transition-all duration-200 hover:scale-105 active:scale-[0.97]"
-          >
-            {shareCopied ? TEXT.detail.shareSuccess : '링크 복사'}
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting}
-            className="flex-1 min-h-12 rounded-xl text-base font-semibold border border-error text-error bg-surface transition-all duration-200 hover:scale-105 disabled:opacity-60"
-          >
+          <ActionButton onClick={() => setShowShareCard(true)} variant="ghost">
+            Share card
+          </ActionButton>
+          <ActionButton onClick={handleShare} variant="ghost">
+            {shareCopied ? 'Copied!' : 'Copy link'}
+          </ActionButton>
+          <ActionButton onClick={handleDelete} variant="danger">
             {deleting ? '...' : TEXT.detail.deleteButton}
-          </button>
+          </ActionButton>
         </div>
 
         {showShareCard && (

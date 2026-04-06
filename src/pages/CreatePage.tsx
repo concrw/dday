@@ -3,17 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createEvent } from '@/services/ddayService';
 import { TEXT } from '@/constants/text';
 import { RecurringToggle } from '@/components/RecurringToggle';
+import { GridGlow } from '@/components/backgrounds/GridGlow';
 import type { CreateDdayEventInput, Recurring } from '@/types';
 
-const DEFAULT_COLOR = '#6366F1';
+const DEFAULT_COLOR = '#a78bfa';
 
-function ColorPicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (c: string) => void;
-}) {
+function ColorPicker({ value, onChange }: { value: string; onChange: (c: string) => void }) {
   return (
     <div className="flex flex-wrap gap-3">
       {TEXT.colors.options.map((opt) => (
@@ -22,16 +17,27 @@ function ColorPicker({
           type="button"
           title={opt.label}
           onClick={() => onChange(opt.value)}
-          className="w-8 h-8 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none"
+          className="w-7 h-7 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none"
           style={{
             background: opt.value,
-            boxShadow: value === opt.value ? `0 0 0 3px white, 0 0 0 5px ${opt.value}` : undefined,
+            boxShadow: value === opt.value ? `0 0 0 2px #080808, 0 0 0 3.5px ${opt.value}` : undefined,
           }}
         />
       ))}
     </div>
   );
 }
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-xs font-semibold uppercase tracking-widest text-text-muted">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+const inputClass = "w-full rounded-xl px-4 py-3 text-sm border border-border bg-surface/60 backdrop-blur-sm text-text placeholder:text-text-muted transition-all duration-150 focus:outline-none focus:border-white/25";
 
 export function CreatePage() {
   const navigate = useNavigate();
@@ -55,7 +61,6 @@ export function CreatePage() {
     e.preventDefault();
     setSubmitting(true);
     setErrorMsg(null);
-
     try {
       const created = await createEvent({
         title: form.title.trim(),
@@ -71,103 +76,94 @@ export function CreatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg animate-page">
-      <section className="py-12 px-4 bg-gradient-to-br from-primary to-primary-dark">
-        <div className="max-w-xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">{TEXT.create.pageTitle}</h1>
-          <p className="text-white/75 mt-2 text-base">{TEXT.create.pageSubtitle}</p>
+    <div className="relative min-h-screen bg-bg animate-page">
+      <GridGlow />
+
+      <div className="relative z-10 max-w-lg mx-auto px-4 py-10">
+        {/* Header */}
+        <div className="mb-10">
+          <Link to="/" className="text-xs text-text-muted hover:text-white transition-colors">
+            ← Back
+          </Link>
+          <h1 className="text-2xl font-semibold text-text mt-4">{TEXT.create.pageTitle}</h1>
+          <p className="text-sm text-text-muted mt-1">{TEXT.create.pageSubtitle}</p>
         </div>
-      </section>
 
-      <section className="max-w-xl mx-auto px-4 py-8">
-        <div className="bg-surface rounded-2xl shadow-card border border-border p-6">
-          {errorMsg && (
-            <div className="mb-5 px-4 py-3 rounded-lg text-sm bg-error-bg text-error">
-              {errorMsg}
-            </div>
-          )}
+        {errorMsg && (
+          <div className="mb-6 px-4 py-3 rounded-xl text-xs bg-error-bg text-error border border-error/20">
+            {errorMsg}
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-text">
-                {TEXT.create.titleLabel}
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                placeholder={TEXT.create.titlePlaceholder}
-                required
-                maxLength={100}
-                className="w-full rounded-lg px-4 py-3 text-base border border-border bg-surface text-text transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <Field label={TEXT.create.titleLabel}>
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder={TEXT.create.titlePlaceholder}
+              required
+              maxLength={100}
+              className={inputClass}
+            />
+          </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-text">
-                {TEXT.create.dateLabel}
-              </label>
-              <input
-                type="date"
-                name="target_date"
-                value={form.target_date}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg px-4 py-3 text-base border border-border bg-surface text-text transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
+          <Field label={TEXT.create.dateLabel}>
+            <input
+              type="date"
+              name="target_date"
+              value={form.target_date}
+              onChange={handleChange}
+              required
+              className={inputClass}
+              style={{ colorScheme: 'dark' }}
+            />
+          </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-text">
-                {TEXT.create.noteLabel}
-              </label>
-              <textarea
-                name="note"
-                value={form.note}
-                onChange={handleChange}
-                placeholder={TEXT.create.notePlaceholder}
-                rows={3}
-                maxLength={300}
-                className="w-full rounded-lg px-4 py-3 text-base border border-border bg-surface text-text transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-              />
-            </div>
+          <Field label={TEXT.create.noteLabel}>
+            <textarea
+              name="note"
+              value={form.note}
+              onChange={handleChange}
+              placeholder={TEXT.create.notePlaceholder}
+              rows={3}
+              maxLength={300}
+              className={`${inputClass} resize-none`}
+            />
+          </Field>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-text">
-                {TEXT.create.colorLabel}
-              </label>
-              <ColorPicker
-                value={form.color ?? DEFAULT_COLOR}
-                onChange={(c) => setForm((prev) => ({ ...prev, color: c }))}
-              />
-            </div>
+          <Field label={TEXT.create.colorLabel}>
+            <ColorPicker
+              value={form.color ?? DEFAULT_COLOR}
+              onChange={(c) => setForm((prev) => ({ ...prev, color: c }))}
+            />
+          </Field>
 
-            <div className="bg-bg rounded-xl px-4 py-3">
-              <RecurringToggle
-                value={form.recurring ?? 'none'}
-                onChange={(v: Recurring) => setForm((prev) => ({ ...prev, recurring: v }))}
-              />
-            </div>
+          <div className="rounded-xl border border-border bg-surface/40 px-4 py-3">
+            <RecurringToggle
+              value={form.recurring ?? 'none'}
+              onChange={(v: Recurring) => setForm((prev) => ({ ...prev, recurring: v }))}
+            />
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 min-h-12 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark transition-all duration-200 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {submitting ? TEXT.create.submittingButton : TEXT.create.submitButton}
-              </button>
-              <Link
-                to="/"
-                className="flex-1 min-h-12 rounded-xl text-base font-semibold text-center flex items-center justify-center transition-all duration-200 hover:scale-105 border border-border text-text-secondary"
-              >
-                {TEXT.create.cancelButton}
-              </Link>
-            </div>
-          </form>
-        </div>
-      </section>
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex-1 min-h-11 rounded-full text-sm font-semibold text-black bg-white hover:bg-white/90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting ? TEXT.create.submittingButton : TEXT.create.submitButton}
+            </button>
+            <Link
+              to="/"
+              className="flex-1 min-h-11 rounded-full text-sm font-semibold text-center flex items-center justify-center transition-all duration-200 border border-border text-text-muted hover:border-white/20 hover:text-white"
+            >
+              {TEXT.create.cancelButton}
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -17,47 +17,63 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
+function DdayDisplay({ diff, color }: { diff: number; color: string }) {
+  const label = TEXT.landing.ddayLabel(diff);
+  // split "D-25" into prefix and number for styling
+  const match = label.match(/^(D[-+]?)(\d+)$/);
+  if (match) {
+    return (
+      <div className="font-num leading-none" style={{ color }}>
+        <span className="text-sm opacity-60">{match[1]}</span>
+        <span className="text-5xl font-medium tracking-tight">{match[2]}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="font-num text-4xl font-medium leading-none" style={{ color }}>
+      {label}
+    </div>
+  );
+}
+
 export function EventCard({ event }: EventCardProps) {
   const effectiveDate = getEffectiveDate(event);
   const diff = getDayDiff(effectiveDate);
-  const label = TEXT.landing.ddayLabel(diff);
-  const relative = TEXT.landing.relativeLabel(diff);
-  const accentColor = event.color ?? 'var(--color-primary)';
+  const accentColor = event.color ?? 'var(--color-accent)';
   const recurring = recurringLabel(event.recurring);
+  const isPast = diff < 0;
 
   return (
     <Link
       to={`/events/${event.id}`}
-      className="card-hover-accent bg-surface rounded-2xl shadow-card border border-border p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.97] block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-      aria-label={`${event.title}, ${label}, ${relative}`}
+      className="group relative flex flex-col justify-between rounded-2xl border border-border bg-surface/60 backdrop-blur-sm p-5 gap-4 transition-all duration-200 hover:border-white/15 hover:bg-surface/80 focus:outline-none"
+      aria-label={`${event.title}, ${TEXT.landing.ddayLabel(diff)}`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex flex-col gap-1 min-w-0">
-          <h3 className="text-lg font-bold leading-tight truncate text-text">
-            {event.title}
-          </h3>
+      {/* Top: D-day number */}
+      <DdayDisplay diff={diff} color={accentColor} />
+
+      {/* Bottom: title + meta */}
+      <div className="flex flex-col gap-1.5">
+        <h3 className="text-sm font-semibold text-text leading-tight truncate">
+          {event.title}
+        </h3>
+        <div className="flex items-center gap-2">
           {recurring && (
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary w-fit">
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-border text-text-muted">
               {recurring}
             </span>
           )}
-        </div>
-        <div className="flex flex-col items-end shrink-0">
-          <span className="text-xl font-bold tabular-nums" style={{ color: accentColor }}>
-            {label}
+          <span className={`text-xs ${isPast ? 'text-text-muted' : 'text-text-secondary'}`}>
+            {formatDate(effectiveDate)}
           </span>
-          <span className="text-xs text-text-secondary mt-0.5">{relative}</span>
         </div>
       </div>
 
-      {event.note && (
-        <p className="text-sm line-clamp-2 text-text-secondary">{event.note}</p>
-      )}
-
-      <div className="flex items-center gap-2 mt-auto pt-2 border-t border-border">
-        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: accentColor }} aria-hidden="true" />
-        <span className="text-sm text-text-secondary">{formatDate(effectiveDate)}</span>
-      </div>
+      {/* Color accent bar */}
+      <div
+        className="absolute left-0 top-4 bottom-4 w-[2px] rounded-full opacity-60"
+        style={{ background: accentColor }}
+      />
     </Link>
   );
 }

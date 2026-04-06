@@ -5,38 +5,36 @@
 @import "@fontsource/pretendard/700.css";
 
 @theme {
-  --color-primary: #6366F1;
-  --color-primary-dark: #4F46E5;
-  --color-accent: #F59E0B;
-  --color-accent-dark: #D97706;
-  --color-bg: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-text: #1F2937;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
-  --color-error: #EF4444;
-  --color-error-bg: #FEF2F2;
-  --color-border: #E5E7EB;
+  --color-primary: #e2e8f0;
+  --color-accent: #a78bfa;
+  --color-bg: #080808;
+  --color-surface: #111111;
+  --color-surface2: #1a1a1a;
+  --color-text: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #475569;
+  --color-border: rgba(255,255,255,0.07);
+  --color-error: #f87171;
+  --color-error-bg: rgba(248,113,113,0.08);
   --radius-card: 16px;
-  --radius-button: 12px;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   --font-sans: "Pretendard", system-ui, -apple-system, sans-serif;
+  --font-mono: "DM Mono", "Space Mono", ui-monospace, monospace;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+
 :root {
-  --color-primary: #6366F1;
-  --color-accent: #F59E0B;
-  --color-bg: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-text: #1F2937;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
-  --color-error: #EF4444;
-  --color-error-bg: #FEF2F2;
-  --color-border: #E5E7EB;
-  --radius-card: 16px;
-  --radius-button: 12px;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --color-primary: #e2e8f0;
+  --color-accent: #a78bfa;
+  --color-bg: #080808;
+  --color-surface: #111111;
+  --color-surface2: #1a1a1a;
+  --color-text: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #475569;
+  --color-border: rgba(255,255,255,0.07);
+  --color-error: #f87171;
+  --color-error-bg: rgba(248,113,113,0.08);
 }
 
 body {
@@ -61,39 +59,46 @@ body {
   to   { opacity: 1; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); opacity: var(--op); }
+  33%       { transform: translateY(-18px) translateX(8px); opacity: calc(var(--op) * 0.4); }
+  66%       { transform: translateY(10px) translateX(-6px); opacity: calc(var(--op) * 1.2); }
+}
+
+@keyframes aurora {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  25%  { transform: translate(8%, -12%) scale(1.1); }
+  50%  { transform: translate(-6%, 8%) scale(0.95); }
+  75%  { transform: translate(12%, 4%) scale(1.05); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+
+@keyframes gridGlow {
+  0%   { opacity: 0; transform: translateY(0); }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
 @keyframes pulse-scale {
   0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.06); }
+  50%       { transform: scale(1.04); }
 }
 
 .animate-page {
-  animation: fadePage 0.25s ease forwards;
+  animation: fadePage 0.3s ease forwards;
 }
 
 .animate-card {
   opacity: 0;
-  animation: fadeSlideUp 0.3s ease forwards;
+  animation: fadeSlideUp 0.35s ease forwards;
 }
 
 .animate-pulse-seconds {
   animation: pulse-scale 1s ease-in-out infinite;
 }
 
-/* Card hover accent bar */
-.card-hover-accent {
-  position: relative;
-  overflow: hidden;
-}
-.card-hover-accent::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: var(--color-primary);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  border-radius: 16px 0 0 16px;
-}
-.card-hover-accent:hover::before {
-  opacity: 1;
+/* number font */
+.font-num {
+  font-family: "DM Mono", "Space Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
