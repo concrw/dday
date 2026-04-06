@@ -1,43 +1,36 @@
-# Design System: CSS Tokens + Pretendard Font + Inline Style Removal
+# Korean Locale + Date Formatting + D-Day Label Polish
 
 ## Status: SUCCESS
 
 ## Changes
 
-### 1. Pretendard Font
-- Installed `@fontsource/pretendard` (400/500/600/700 weights)
-- Imported in `main.tsx` and set as default `font-family` in `index.css`
-- Configured in Tailwind v4 `@theme` as `--font-sans`
+### 1. TEXT Constants (src/constants/text.ts)
+All UI strings updated to Korean:
+- `nav.createButton`: '새 이벤트'
+- `landing.heroTitle`: 'D-Day 카운터'
+- `landing.heroSubtitle`: '중요한 날을 기억하고 카운트다운하세요.'
+- `landing.emptyTitle/Subtitle`: 한국어 빈 상태 메시지
+- `landing.loadingText/errorText`: 한국어
+- Added `landing.relativeLabel`: `(n) => '오늘' | '${n}일 후' | '${n}일 전'`
+- `create.*`: 모든 폼 레이블/플레이스홀더 한국어 ('이벤트 제목', '예) 졸업식', '목표 날짜', etc.)
+- `detail.*`: 모든 레이블 한국어 ('일/시간/분/초', '공유', '삭제', '뒤로', etc.)
+- Color labels: 한국어 ('인디고', '바이올렛', etc.)
 
-### 2. CSS Custom Properties (Design Tokens)
-Defined in both `:root` and `@theme` in `index.css`:
-- `--color-primary: #6366F1` (indigo)
-- `--color-primary-dark: #4F46E5`
-- `--color-accent: #F59E0B` (amber)
-- `--color-accent-dark: #D97706`
-- `--color-bg: #F8FAFC`
-- `--color-surface: #FFFFFF`
-- `--color-text: #1F2937`
-- `--color-text-secondary: #6B7280`
-- `--color-text-muted: #9CA3AF`
-- `--color-error: #EF4444`
-- `--color-border: #E5E7EB`
-- `--radius-card: 16px`, `--radius-button: 12px`
-- `--shadow-card` for consistent card shadows
+### 2. Date Formatting (ko-KR)
+- `EventCard.tsx`: `toLocaleDateString('ko-KR', ...)` — e.g. "2026년 1월 15일"
+- `DetailPage.tsx`: `toLocaleDateString('ko-KR', ...)` — same
 
-### 3. Inline Style Removal
-Replaced all static `style={{}}` props across 7 components with Tailwind utility classes:
-- `EventCard.tsx`, `LandingPage.tsx`, `DetailPage.tsx`, `CreatePage.tsx`, `NavBar.tsx`, `CountdownBlock.tsx`, `LoadingSpinner.tsx`
+### 3. D-Day Label Logic (already correct, kept)
+- 오늘: `D-Day`
+- 미래: `D-{N}` (no plus sign, Korean convention)
+- 과거: `D+{N}`
 
-Only 4 inline styles remain for dynamic user-chosen accent colors (cannot be static).
+### 4. Relative Time Subtitle in EventCard
+Added `relative` label rendered below the main D-day label:
+- `'오늘'`, `'3일 후'`, `'2일 전'`
 
-### 4. Border Radius Consistency
-- Cards: `rounded-2xl` (16px)
-- Buttons: `rounded-xl` (12px)
-- Inputs: `rounded-lg`
-
-### 5. Color Palette Update
-Updated default accent to `#6366F1` (indigo). Color picker options: Indigo, Violet, Amber, Red, Emerald, Pink, Cyan.
+### 5. CreatePage Korean Labels
+Via text.ts: titleLabel='이벤트 제목', titlePlaceholder='예) 졸업식', dateLabel='목표 날짜', etc.
 
 ## Build
 `npm run build` passes with 0 errors.

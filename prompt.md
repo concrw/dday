@@ -2,7 +2,7 @@ You are a specialist agent inside AOS (Agent Operating System).
 You do not own persistent state.
 
 ## Output: create ./result.json (MANDATORY) and ./summary.md
-result.json schema: {"schema_version":"execution_result_v1","task_id":"0eb8899e-0c74-4d50-ad40-394c63574059","status":"SUCCESS|FAILED","summary":"min 20 chars","changed_files":[],"artifacts":[],"tests":{"ran":false,"passed":false},"approval_flags":[],"issues":[],"next_actions":[]}
+result.json schema: {"schema_version":"execution_result_v1","task_id":"aa544faf-cbc8-4dd8-8110-eadc0d023ecf","status":"SUCCESS|FAILED","summary":"min 20 chars","changed_files":[],"artifacts":[],"tests":{"ran":false,"passed":false},"approval_flags":[],"issues":[],"next_actions":[]}
 Create result.json FIRST, update with final results LAST. List ALL changed files.
 
 Rules:
@@ -22,9 +22,9 @@ Rules:
 ```json
 {
   "task": {
-    "id": "0eb8899e-0c74-4d50-ad40-394c63574059",
-    "title": "[dday] Design system: CSS tokens + Pretendard font + remove inline styles",
-    "objective": "Refactor the dday app to use a proper design system.\n\nRepo: /Users/brandactivist/Desktop/dday\n\nTasks:\n1. Install Pretendard font via @fontsource/pretendard and apply as default font-family in index.css\n2. Define CSS custom properties (--color-primary, --color-bg, --color-surface, --color-text, --color-accent, --radius-card, --shadow-card) in :root inside index.css\n3. Replace ALL inline style={{}} color/background/borderRadius props in EventCard.tsx, LandingPage.tsx, DetailPage.tsx, CreatePage.tsx, NavBar.tsx with Tailwind classes or CSS variables\n4. Apply consistent border-radius using rounded-2xl (16px) for cards, rounded-xl (12px) for buttons\n5. Ensure the color palette is warm and modern — primary: #6366F1 (indigo), accent: #F59E0B (amber), bg: #F8FAFC\n6. Build must pass with 0 errors"
+    "id": "aa544faf-cbc8-4dd8-8110-eadc0d023ecf",
+    "title": "[dday] Korean locale + date formatting + D-day label polish",
+    "objective": "Fix all locale and UX text issues in the dday app.\n\nRepo: /Users/brandactivist/Desktop/dday\n\n1. Change all date formatting from en-US to ko-KR locale (toLocaleDateString with ko-KR)\n2. Update D-day label logic in TEXT constants and EventCard/DetailPage:\n   - D-Day (오늘): \"D-Day\"\n   - Future: \"D-{N}\" (no plus sign, Korean convention)\n   - Past: \"D+{N}\"\n3. Update TEXT constants in src/constants/text.ts to Korean strings where currently English\n4. Add relative time display (\"3일 후\", \"오늘\", \"2일 전\") as subtitle under main D-day label in EventCard\n5. In CreatePage, change date input placeholder/label to Korean\n6. Build must pass with 0 errors"
   },
   "constraints": "{}",
   "context": {
@@ -32,37 +32,37 @@ Rules:
       "{\"lesson\":\"일반 원칙: API 키는 환경변수. 예외: Supabase CLI 없으면 Vault → DB 함수 → Edge Function 경로 사용\",\"result\":\"Vault에 저장하고 DB 함수(vault_read_secret)를 통해 Edge Function에서 조회하는 방식 사용\",\"severity\":\"P2\",\"situation\":\"Edge Function에서 Vault의 API 키 사용\",\"confidence\":0.85,\"action_taken\":\"Deno.env.get()로 시도 → 없음. supabase secrets set도 CLI 로그인 필요\",\"character_id\":\"90cd461a-c6f4-446c-b8da-9c78a139a26e\",\"original_experience_id\":\"9667f624-e44c-48d5-b429-762794d90fe0\"}"
     ],
     "sprint": [],
-    "task": [],
+    "task": [
+      "--- src/pages/CreatePage.tsx (165 lines, first 50) ---\nimport { useState, type FormEvent, type ChangeEvent } from 'react';\nimport { useNavigate, Link } from 'react-router-dom';\nimport { createEvent } from '@/services/ddayService';\nimport { TEXT } from '@/constants/text';\nimport type { CreateDdayEventInput } from '@/types';\n\nconst DEFAULT_COLOR = '#6366F1';\n\nfunction ColorPicker({\n  value,\n  onChange,\n}: {\n  value: string;\n  onChange: (c: string) => void;\n}) {\n  return (\n    <div className=\"flex flex-wrap gap-3\">\n      {TEXT.colors.options.map((opt) => (\n        <button\n          key={opt.value}\n          type=\"button\"\n          title={opt.label}\n          onClick={() => onChange(opt.value)}\n          className=\"w-8 h-8 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none\"\n          style={{\n            background: opt.value,\n            boxShadow: value === opt.value ? `0 0 0 3px white, 0 0 0 5px ${opt.value}` : undefined,\n          }}\n        />\n      ))}\n    </div>\n  );\n}\n\nexport function CreatePage() {\n  const navigate = useNavigate();\n  const [submitting, setSubmitting] = useState(false);\n  const [errorMsg, setErrorMsg] = useState<string | null>(null);\n\n  const [form, setForm] = useState<CreateDdayEventInput>({\n    title: '',\n    target_date: '',\n    note: '',\n    color: DEFAULT_COLOR,\n  });\n\n  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {\n    const { name, value } = e.target;\n    setForm((prev) => ({ ...prev, [name]: value }));\n  }"
+    ],
     "working": [],
     "persistent": [],
     "evidence": [],
     "artifact_refs": [],
-    "compressed_summary": "Policy: {\"lesson\":\"일반 원칙: API 키는 환경변수. 예외: Supabase CLI 없으면 Vault → DB 함수 → Edge Function 경로 사용\",\"result\":\"Vault에 저장하고 DB 함수(vault_read_secret)를 통해 Edge Function에서 조회하는 방식 사용\",\"severity\":\"P2\",\"situation\":\"Edge Function에서 Vault의 API 키 사용\",\"confidence\":0.85,\"action_taken\":\"Deno.env.get()로 시도 → 없음. supabase secrets set도 CLI 로그인 필요\",\"character_id\":\"90cd461a-c6f4-446c-b8da-9c78a139a26e\",\"original_experience_id\":\"9667f624-e44c-48d5-b429-762794d90fe0\"}"
+    "compressed_summary": "Policy: {\"lesson\":\"일반 원칙: API 키는 환경변수. 예외: Supabase CLI 없으면 Vault → DB 함수 → Edge Function 경로 사용\",\"result\":\"Vault에 저장하고 DB 함수(vault_read_secret)를 통해 Edge Function에서 조회하는 방식 사용\",\"severity\":\"P2\",\"situation\":\"Edge Function에서 Vault의 API 키 사용\",\"confidence\":0.85,\"action_taken\":\"Deno.env.get()로 시도 → 없음. supabase secrets set도 CLI 로그인 필요\",\"character_id\":\"90cd461a-c6f4-446c-b8da-9c78a139a26e\",\"original_experience_id\":\"9667f624-e44c-48d5-b429-762794d90fe0\"}\nTask: --- src/pages/CreatePage.tsx (165 lines, first 50) ---\nimport { useState, type FormEvent, type ChangeEvent } from 'react';\nimport { useNavigate, Link } from 'react-router-dom';\nimport { createEvent } from '@/services/ddayService';\nimport { TEXT } from '@/constants/text';\nimport type { CreateDdayEventInput } from '@/types';\n\nconst DEFAULT_COLOR = '#6366F1';\n\nfunction ColorPicker({\n  value,\n  onChange,\n}: {\n  value: string;\n  onChange: (c: string) => void;\n}) {\n  return (\n    <div className=\"flex flex-wrap gap-3\">\n      {TEXT.colors.options.map((opt) => (\n        <button\n          key={opt.value}\n          type=\"button\"\n          title={opt.label}\n          onClick={() => onChange(opt.value)}\n          className=\"w-8 h-8 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none\"\n          style={{\n            background: opt.value,\n            boxShadow: value === opt.value ? `0 0 0 3px white, 0 0 0 5px ${opt.value}` : undefined,\n          }}\n        />\n      ))}\n    </div>\n  );\n}\n\nexport function CreatePage() {\n  const navigate = useNavigate();\n  const [submitting, setSubmitting] = useState(false);\n  const [errorMsg, setErrorMsg] = useState<string | null>(null);\n\n  const [form, setForm] = useState<CreateDdayEventInput>({\n    title: '',\n    target_date: '',\n    note: '',\n    color: DEFAULT_COLOR,\n  });\n\n  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {\n    const { name, value } = e.target;\n    setForm((prev) => ({ ...prev, [name]: value }));\n  }"
   },
   "plan": {
     "steps": [
-      "Step 1: Install Pretendard font via npm install @fontsource/pretendard",
-      "Step 2: Update index.css to import Pretendard, define CSS custom properties (:root with --color-primary: #6366F1, --color-accent: #F59E0B, --color-bg: #F8FAFC, --color-text, --color-surface, --radius-card: 16px, --radius-button: 12px, --shadow-card), and set global font-family to Pretendard",
-      "Step 3: Create tailwind.config.js to extend theme with custom colors and border-radius values from CSS variables, set default font-family to Pretendard",
-      "Step 4: Refactor EventCard.tsx — replace all inline style={{}} (colors, backgroundColor, borderRadius, boxShadow) with Tailwind classes (bg-*, text-*, rounded-*) and CSS var() fallbacks",
-      "Step 5: Refactor LandingPage.tsx, DetailPage.tsx, CreatePage.tsx, NavBar.tsx — systematically replace inline styles with Tailwind classes or CSS variables",
-      "Step 6: Verify all border-radius values: cards use rounded-2xl (16px), buttons use rounded-xl (12px)",
-      "Step 7: Run npm run build and verify 0 errors, then npm run dev to browser-test all pages (landing, create, detail card rendering, navbar styling)",
-      "Step 8: Commit changes with proper git author and push"
+      "Step 1: Explore dday repo structure to identify all files needing changes (TEXT constants, EventCard, DetailPage, CreatePage, date utilities)",
+      "Step 2: Update TEXT constants in src/constants/text.ts to Korean strings (labels, placeholders, empty states)",
+      "Step 3: Update date formatting utilities to use toLocaleDateString('ko-KR') instead of en-US",
+      "Step 4: Implement D-day label logic (D-Day for today, D-{N} for future, D+{N} for past) in EventCard and DetailPage components",
+      "Step 5: Add relative time display function ('3일 후', '오늘', '2일 전') and render as subtitle below D-day label in EventCard",
+      "Step 6: Update CreatePage date input placeholder and label to Korean text",
+      "Step 7: Build project and verify 0 errors",
+      "Step 8: Test date formatting and D-day labels in browser for today/past/future events"
     ],
     "pre_checks": [
-      "npm run build passes with current code (0 errors)",
-      "Current app renders all pages without layout issues",
-      "Verify Tailwind v4 is properly loaded in vite.config.ts",
-      "Grep all components to identify all inline style={{}} instances",
-      "Check that no dynamic color values are generated via JavaScript"
+      "Verify dday repo exists and build tools are available",
+      "Check current TEXT constants structure and all usage sites",
+      "Review EventCard, DetailPage, CreatePage current implementations",
+      "Verify no build errors in baseline state"
     ],
     "risk_areas": [
-      "EventCard, LandingPage, DetailPage, CreatePage, NavBar component layout breakage from style removal",
-      "Font loading delay or Pretendard not applying correctly",
-      "CSS variable fallbacks may not work in older browsers",
-      "Tailwind purge/build might fail if custom classes are dynamically generated",
-      "Color precision — must verify #6366F1, #F59E0B, #F8FAFC render exactly as intended"
+      "Date formatting logic changes (potential display regressions)",
+      "D-day label calculation logic (edge cases: today, tomorrow, past dates)",
+      "TEXT constants refactoring (ensure all references updated consistently)",
+      "Relative time calculation and display (new feature, off-by-one errors possible)"
     ],
     "estimated_complexity": "M"
   },
@@ -91,17 +91,17 @@ Rules:
 
 
 ## Execution Plan (follow these steps):
-1. Step 1: Install Pretendard font via npm install @fontsource/pretendard
-2. Step 2: Update index.css to import Pretendard, define CSS custom properties (:root with --color-primary: #6366F1, --color-accent: #F59E0B, --color-bg: #F8FAFC, --color-text, --color-surface, --radius-card: 16px, --radius-button: 12px, --shadow-card), and set global font-family to Pretendard
-3. Step 3: Create tailwind.config.js to extend theme with custom colors and border-radius values from CSS variables, set default font-family to Pretendard
-4. Step 4: Refactor EventCard.tsx — replace all inline style={{}} (colors, backgroundColor, borderRadius, boxShadow) with Tailwind classes (bg-*, text-*, rounded-*) and CSS var() fallbacks
-5. Step 5: Refactor LandingPage.tsx, DetailPage.tsx, CreatePage.tsx, NavBar.tsx — systematically replace inline styles with Tailwind classes or CSS variables
-6. Step 6: Verify all border-radius values: cards use rounded-2xl (16px), buttons use rounded-xl (12px)
-7. Step 7: Run npm run build and verify 0 errors, then npm run dev to browser-test all pages (landing, create, detail card rendering, navbar styling)
-8. Step 8: Commit changes with proper git author and push
+1. Step 1: Explore dday repo structure to identify all files needing changes (TEXT constants, EventCard, DetailPage, CreatePage, date utilities)
+2. Step 2: Update TEXT constants in src/constants/text.ts to Korean strings (labels, placeholders, empty states)
+3. Step 3: Update date formatting utilities to use toLocaleDateString('ko-KR') instead of en-US
+4. Step 4: Implement D-day label logic (D-Day for today, D-{N} for future, D+{N} for past) in EventCard and DetailPage components
+5. Step 5: Add relative time display function ('3일 후', '오늘', '2일 전') and render as subtitle below D-day label in EventCard
+6. Step 6: Update CreatePage date input placeholder and label to Korean text
+7. Step 7: Build project and verify 0 errors
+8. Step 8: Test date formatting and D-day labels in browser for today/past/future events
 
-Risk areas: EventCard, LandingPage, DetailPage, CreatePage, NavBar component layout breakage from style removal, Font loading delay or Pretendard not applying correctly, CSS variable fallbacks may not work in older browsers, Tailwind purge/build might fail if custom classes are dynamically generated, Color precision — must verify #6366F1, #F59E0B, #F8FAFC render exactly as intended
-Pre-checks: npm run build passes with current code (0 errors), Current app renders all pages without layout issues, Verify Tailwind v4 is properly loaded in vite.config.ts, Grep all components to identify all inline style={{}} instances, Check that no dynamic color values are generated via JavaScript
+Risk areas: Date formatting logic changes (potential display regressions), D-day label calculation logic (edge cases: today, tomorrow, past dates), TEXT constants refactoring (ensure all references updated consistently), Relative time calculation and display (new feature, off-by-one errors possible)
+Pre-checks: Verify dday repo exists and build tools are available, Check current TEXT constants structure and all usage sites, Review EventCard, DetailPage, CreatePage current implementations, Verify no build errors in baseline state
 
 ## Quality Standards (MUST follow — violations fail QA):
 - [ERROR] No secrets in frontend code: API keys, tokens, passwords must be in .env, never in source (weight: 3.0, violations: 0)
