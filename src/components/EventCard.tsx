@@ -16,29 +16,35 @@ function getDayDiff(targetDate: string): number {
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 export function EventCard({ event }: EventCardProps) {
   const diff = getDayDiff(event.target_date);
   const label = TEXT.landing.ddayLabel(diff);
+  const relative = TEXT.landing.relativeLabel(diff);
   const accentColor = event.color ?? 'var(--color-primary)';
 
   return (
     <Link
       to={`/events/${event.id}`}
-      className="bg-surface rounded-2xl shadow-card border border-border p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] block"
+      className="card-hover-accent bg-surface rounded-2xl shadow-card border border-border p-6 flex flex-col gap-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.97] block"
     >
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-lg font-bold leading-tight truncate text-text">
           {event.title}
         </h3>
-        <span
-          className="shrink-0 text-xl font-bold tabular-nums"
-          style={{ color: accentColor }}
-        >
-          {label}
-        </span>
+        <div className="flex flex-col items-end shrink-0">
+          <span
+            className="text-xl font-bold tabular-nums"
+            style={{ color: accentColor }}
+          >
+            {label}
+          </span>
+          <span className="text-xs text-text-secondary mt-0.5">
+            {relative}
+          </span>
+        </div>
       </div>
 
       {event.note && (

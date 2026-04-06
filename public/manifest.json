@@ -1,0 +1,18 @@
+{
+  "name": "D-Day 카운터",
+  "short_name": "DDay",
+  "description": "중요한 날을 기억하고 카운트다운하세요.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#6366F1",
+  "background_color": "#F8FAFC",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

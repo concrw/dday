@@ -37,7 +37,7 @@ export function LandingPage() {
   const { events, loading, error } = useDdayEvents();
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg animate-page">
       <section className="py-16 px-4 bg-gradient-to-br from-primary to-primary-dark">
         <div className="max-w-5xl mx-auto text-center flex flex-col items-center gap-4">
           <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
@@ -68,8 +68,10 @@ export function LandingPage() {
 
         {!loading && !error && events.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} />
+            {events.map((event, i) => (
+              <div key={event.id} className="animate-card" style={{ animationDelay: `${i * 60}ms` }}>
+                <EventCard event={event} />
+              </div>
             ))}
           </div>
         )}

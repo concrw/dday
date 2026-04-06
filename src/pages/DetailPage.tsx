@@ -9,7 +9,7 @@ import { TEXT } from '@/constants/text';
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function getDayDiff(targetDate: string): number {
@@ -36,7 +36,7 @@ function CountdownSection({ targetDate, color }: { targetDate: string; color: st
           <CountdownBlock value={countdown.days} label={TEXT.detail.daysUnit} />
           <CountdownBlock value={countdown.hours} label={TEXT.detail.hoursUnit} />
           <CountdownBlock value={countdown.minutes} label={TEXT.detail.minutesUnit} />
-          <CountdownBlock value={countdown.seconds} label={TEXT.detail.secondsUnit} />
+          <CountdownBlock value={countdown.seconds} label={TEXT.detail.secondsUnit} pulse />
         </div>
       )}
 
