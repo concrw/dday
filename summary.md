@@ -1,27 +1,28 @@
-# Micro-animations — Implementation Summary
+# RLS Owner Policies — Implementation Summary
 
 ## Status: SUCCESS
 
+## Problem
+The `dday_events` table had no user-scoped RLS (effectively `USING (true)`), allowing any authenticated user to read and mutate every other user's events.
+
 ## Changes
 
-### `src/pages/LandingPage.tsx`
-- Stagger delay corrected: `i * 60` → `i * 50` ms per card (task spec requires 50ms)
+### `supabase/migrations/20260410000000_rls_owner_policies.sql` (new)
+- Adds `user_id uuid REFERENCES auth.users(id)` column (idempotent `ADD COLUMN IF NOT EXISTS`)
+- Enables RLS on `dday_events`
+- Drops ALL existing policies via a `pg_policies` loop (eliminates any leftover `USING (true)` policy)
+- Creates four owner-scoped policies:
+  - **SELECT** `USING (auth.uid() = user_id)`
+  - **INSERT** `WITH CHECK (auth.uid() = user_id)`
+  - **UPDATE** `USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id)`
+  - **DELETE** `USING (auth.uid() = user_id)`
 
-### `src/pages/DetailPage.tsx`
-- Root div: added `animate-page` class for fade-in on mount
-- D-day label: added `transition: 'color 0.4s ease'` so color smoothly transitions when sign changes (past / today / future)
+### `src/types/index.ts`
+- Added `user_id: string` to `DdayEvent` interface to match the new column
 
-### `src/pages/CreatePage.tsx`
-- Root div: added `animate-page` class for fade-in on mount
-
-## Already in place (no changes needed)
-- `@keyframes fadeSlideUp`, `fadePage`, `pulse-scale` in `index.css`
-- `.animate-card`, `.animate-page`, `.animate-pulse-seconds` utility classes
-- `.card-hover-accent` with `::before` pseudo-element for 4px left border on hover
-- `EventCard` already uses `card-hover-accent` class
-- `CountdownBlock` already applies `animate-pulse-seconds` when `pulse={true}`
-- `LandingPage` already used `animate-page` and staggered `.animate-card` wrappers
-- `DetailPage` already passes `pulse` to the seconds `CountdownBlock`
+### `src/services/ddayService.ts`
+- `createEvent` now calls `supabase.auth.getUser()` and injects `user_id: user.id` into the insert payload
+- Throws `'Not authenticated'` if no session, preventing a silent RLS rejection
 
 ## Build
-`npm run build` — 81 modules transformed, 0 errors, built in 141ms.
+`npm run build` — 89 modules transformed, 0 errors, built in 148ms.

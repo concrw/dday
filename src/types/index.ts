@@ -2,6 +2,7 @@ export type Recurring = 'none' | 'yearly';
 
 export interface DdayEvent {
   id: string;
+  user_id: string;
   title: string;
   target_date: string;
   note: string | null;

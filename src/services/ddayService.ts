@@ -23,9 +23,12 @@ export async function fetchEvent(id: string): Promise<DdayEvent> {
 }
 
 export async function createEvent(input: CreateDdayEventInput): Promise<DdayEvent> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('dday_events')
-    .insert(input)
+    .insert({ ...input, user_id: user.id })
     .select()
     .single();
 
